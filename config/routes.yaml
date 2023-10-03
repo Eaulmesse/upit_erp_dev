@@ -1,3 +1,11 @@
 controllers:
     resource: ../src/Controller/
     type: attribute
+
+webhook_get:
+    path: '/webhook/companies'
+    controller: 'App\Controller\WebhookController::getWebhookCompanies'
+
+webhook_filter: 
+    path: '/webhook/companies/filter'
+    controller: 'App\Controller\WebhookController::webhookCompaniesFilter'
