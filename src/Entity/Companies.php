@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CompaniesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -67,6 +69,14 @@ class Companies
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $language = null;
+
+    #[ORM\OneToMany(mappedBy: 'company', targetEntity: Addresses::class)]
+    private Collection $addresses;
+
+    public function __construct()
+    {
+        $this->addresses = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -292,6 +302,36 @@ class Companies
     public function setLanguage(string $language): static
     {
         $this->language = $language;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Addresses>
+     */
+    public function getAddresses(): Collection
+    {
+        return $this->addresses;
+    }
+
+    public function addAddress(Addresses $address): static
+    {
+        if (!$this->addresses->contains($address)) {
+            $this->addresses->add($address);
+            $address->setCompanyId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAddress(Addresses $address): static
+    {
+        if ($this->addresses->removeElement($address)) {
+            // set the owning side to null (unless already changed)
+            if ($address->getCompanyId() === $this) {
+                $address->setCompanyId(null);
+            }
+        }
 
         return $this;
     }
