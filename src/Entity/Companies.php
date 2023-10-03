@@ -73,9 +73,13 @@ class Companies
     #[ORM\OneToMany(mappedBy: 'company', targetEntity: Addresses::class)]
     private Collection $addresses;
 
+    #[ORM\OneToMany(mappedBy: 'company', targetEntity: Employees::class)]
+    private Collection $employees;
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
+        $this->employees = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -330,6 +334,36 @@ class Companies
             // set the owning side to null (unless already changed)
             if ($address->getCompanyId() === $this) {
                 $address->setCompanyId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Employees>
+     */
+    public function getEmployees(): Collection
+    {
+        return $this->employees;
+    }
+
+    public function addEmployee(Employees $employee): static
+    {
+        if (!$this->employees->contains($employee)) {
+            $this->employees->add($employee);
+            $employee->setCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmployee(Employees $employee): static
+    {
+        if ($this->employees->removeElement($employee)) {
+            // set the owning side to null (unless already changed)
+            if ($employee->getCompany() === $this) {
+                $employee->setCompany(null);
             }
         }
 

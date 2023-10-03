@@ -15,7 +15,7 @@ use App\Repository\CompaniesRepository;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use App\Repository\AddressesRepository;
 
-class WebhookController extends AbstractController
+class CompaniesController extends AbstractController
 {
 
     private $logger;
