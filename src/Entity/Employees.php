@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EmployeesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -40,6 +42,14 @@ class Employees
 
     #[ORM\ManyToOne(inversedBy: 'employees')]
     private ?Companies $company = null;
+
+    #[ORM\OneToMany(mappedBy: 'employees', targetEntity: Opportunities::class)]
+    private Collection $opportunities;
+
+    public function __construct()
+    {
+        $this->opportunities = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -157,6 +167,36 @@ class Employees
     public function setCompany(?Companies $company): static
     {
         $this->company = $company;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Opportunities>
+     */
+    public function getOpportunities(): Collection
+    {
+        return $this->opportunities;
+    }
+
+    public function addOpportunity(Opportunities $opportunity): static
+    {
+        if (!$this->opportunities->contains($opportunity)) {
+            $this->opportunities->add($opportunity);
+            $opportunity->setEmployees($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOpportunity(Opportunities $opportunity): static
+    {
+        if ($this->opportunities->removeElement($opportunity)) {
+            // set the owning side to null (unless already changed)
+            if ($opportunity->getEmployees() === $this) {
+                $opportunity->setEmployees(null);
+            }
+        }
 
         return $this;
     }

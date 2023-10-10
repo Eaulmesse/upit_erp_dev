@@ -2,6 +2,8 @@ controllers:
     resource: ../src/Controller/
     type: attribute
 
+
+# COMPANIES ROUTE
 webhook_companies_get:
     path: '/webhook/companies'
     controller: 'App\Controller\CompaniesController::getWebhookCompanies'
@@ -13,3 +15,8 @@ webhook_companies_filter:
 webhook_employees_get:
     path: '/webhook/employees'
     controller: 'App\Controller\EmployeesController::getWebhookEmployees' 
+
+# PRODUCTS ROUTE
+webhook_products_get:
+    path: '/webhook/products'
+    controller: 'App\Controller\ProductsController::getWebhookProducts'

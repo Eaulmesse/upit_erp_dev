@@ -76,10 +76,28 @@ class Companies
     #[ORM\OneToMany(mappedBy: 'company', targetEntity: Employees::class)]
     private Collection $employees;
 
+    #[ORM\OneToMany(mappedBy: 'company', targetEntity: Quotations::class)]
+    private Collection $quotations;
+
+    #[ORM\OneToMany(mappedBy: 'company', targetEntity: Contracts::class)]
+    private Collection $contracts;
+
+    #[ORM\OneToMany(mappedBy: 'company', targetEntity: Opportunities::class)]
+    private Collection $opportunities;
+
+    #[ORM\OneToMany(mappedBy: 'companies', targetEntity: Projects::class)]
+    private Collection $projects;
+
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
         $this->employees = new ArrayCollection();
+        // $this->company_name = new ArrayCollection();
+        $this->quotations = new ArrayCollection();
+        $this->contracts = new ArrayCollection();
+        $this->opportunities = new ArrayCollection();
+        $this->projects = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -369,4 +387,126 @@ class Companies
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Quotations>
+     */
+    public function getQuotations(): Collection
+    {
+        return $this->quotations;
+    }
+
+    public function addQuotation(Quotations $quotation): static
+    {
+        if (!$this->quotations->contains($quotation)) {
+            $this->quotations->add($quotation);
+            $quotation->setCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuotation(Quotations $quotation): static
+    {
+        if ($this->quotations->removeElement($quotation)) {
+            // set the owning side to null (unless already changed)
+            if ($quotation->getCompany() === $this) {
+                $quotation->setCompany(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Contracts>
+     */
+    public function getContracts(): Collection
+    {
+        return $this->contracts;
+    }
+
+    public function addContract(Contracts $contract): static
+    {
+        if (!$this->contracts->contains($contract)) {
+            $this->contracts->add($contract);
+            $contract->setCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContract(Contracts $contract): static
+    {
+        if ($this->contracts->removeElement($contract)) {
+            // set the owning side to null (unless already changed)
+            if ($contract->getCompany() === $this) {
+                $contract->setCompany(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Opportunities>
+     */
+    public function getOpportunities(): Collection
+    {
+        return $this->opportunities;
+    }
+
+    public function addOpportunity(Opportunities $opportunity): static
+    {
+        if (!$this->opportunities->contains($opportunity)) {
+            $this->opportunities->add($opportunity);
+            $opportunity->setCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOpportunity(Opportunities $opportunity): static
+    {
+        if ($this->opportunities->removeElement($opportunity)) {
+            // set the owning side to null (unless already changed)
+            if ($opportunity->getCompany() === $this) {
+                $opportunity->setCompany(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Projects>
+     */
+    public function getProjects(): Collection
+    {
+        return $this->projects;
+    }
+
+    public function addProject(Projects $project): static
+    {
+        if (!$this->projects->contains($project)) {
+            $this->projects->add($project);
+            $project->setCompanies($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProject(Projects $project): static
+    {
+        if ($this->projects->removeElement($project)) {
+            // set the owning side to null (unless already changed)
+            if ($project->getCompanies() === $this) {
+                $project->setCompanies(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 }
