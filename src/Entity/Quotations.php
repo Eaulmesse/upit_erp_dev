@@ -89,24 +89,31 @@ class Quotations
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $customer_portal_url = null;
 
-    #[ORM\ManyToOne(inversedBy: 'quotations')]
-    private ?Users $users = null;
+    // #[ORM\ManyToOne(inversedBy: 'quotations')]
+    // private ?Users $users = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Projects $projects = null;
+    // #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    // private ?Projects $projects = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Opportunities $opportunities = null;
+    // #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    // private ?Opportunities $opportunities = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Contracts $contract = null;
+    // #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    // private ?Contracts $contract = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?QuotationLines $quotation_line = null;
+    // #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    // private ?QuotationLines $quotation_line = null;
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(?string $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getNumber(): ?string
@@ -409,63 +416,63 @@ class Quotations
         return $this;
     }
 
-    public function getUsers(): ?Users
-    {
-        return $this->users;
-    }
+    // public function getUsers(): ?Users
+    // {
+    //     return $this->users;
+    // }
 
-    public function setUsers(?Users $users): static
-    {
-        $this->users = $users;
+    // public function setUsers(?Users $users): static
+    // {
+    //     $this->users = $users;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getProjects(): ?Projects
-    {
-        return $this->projects;
-    }
+    // public function getProjects(): ?Projects
+    // {
+    //     return $this->projects;
+    // }
 
-    public function setProjects(?Projects $projects): static
-    {
-        $this->projects = $projects;
+    // public function setProjects(?Projects $projects): static
+    // {
+    //     $this->projects = $projects;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getOpportunities(): ?Opportunities
-    {
-        return $this->opportunities;
-    }
+    // public function getOpportunities(): ?Opportunities
+    // {
+    //     return $this->opportunities;
+    // }
 
-    public function setOpportunities(?Opportunities $opportunities): static
-    {
-        $this->opportunities = $opportunities;
+    // public function setOpportunities(?Opportunities $opportunities): static
+    // {
+    //     $this->opportunities = $opportunities;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getContract(): ?Contracts
-    {
-        return $this->contract;
-    }
+    // public function getContract(): ?Contracts
+    // {
+    //     return $this->contract;
+    // }
 
-    public function setContract(?Contracts $contract): static
-    {
-        $this->contract = $contract;
+    // public function setContract(?Contracts $contract): static
+    // {
+    //     $this->contract = $contract;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getQuotationLine(): ?QuotationLines
-    {
-        return $this->quotation_line;
-    }
+    // public function getQuotationLine(): ?QuotationLines
+    // {
+    //     return $this->quotation_line;
+    // }
 
-    public function setQuotationLine(?QuotationLines $quotation_line): static
-    {
-        $this->quotation_line = $quotation_line;
+    // public function setQuotationLine(?QuotationLines $quotation_line): static
+    // {
+    //     $this->quotation_line = $quotation_line;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 }

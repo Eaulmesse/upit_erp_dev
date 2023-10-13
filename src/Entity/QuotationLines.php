@@ -307,25 +307,25 @@ class QuotationLines
         return $this->product;
     }
 
-    public function addProduct(Products $product): static
-    {
-        if (!$this->product->contains($product)) {
-            $this->product->add($product);
-            $product->setQuotationLines($this);
-        }
+    // public function addProduct(Products $product): static
+    // {
+    //     if (!$this->product->contains($product)) {
+    //         $this->product->add($product);
+    //         $product->setQuotationLines($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeProduct(Products $product): static
-    {
-        if ($this->product->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getQuotationLines() === $this) {
-                $product->setQuotationLines(null);
-            }
-        }
+    // public function removeProduct(Products $product): static
+    // {
+    //     if ($this->product->removeElement($product)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($product->getQuotationLines() === $this) {
+    //             $product->setQuotationLines(null);
+    //         }
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 }
