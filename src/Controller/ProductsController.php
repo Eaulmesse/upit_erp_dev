@@ -24,6 +24,98 @@ class ProductsController extends AbstractController
         $this->client = $client;
     }
 
+    #[Route('/webhook/products', name: 'app_webhook_products', methods: 'POST')]
+    public function getWebhookCompanies(Request $request, SessionInterface $session, EntityManagerInterface $em, ProductsRepository $productsRepository, LoggerInterface $logger): Response
+    {
+        $response = json_decode($request->getContent(), true);
+
+        if ($response === null) {
+            $this->logger->error('Invalid JSON received.');
+            return new Response('Invalid JSON', Response::HTTP_BAD_REQUEST);
+        }
+        
+        $session->set('webhook_data', $response);
+        $this->logger->info('Webhook received!', $response);
+
+        $this->webhookProductsFilter($session, $em, $productsRepository, $logger);
+
+        return $this->forward('App\Controller\AddressesController::GetWebhookFromCompanies', [
+            'responseData' => $response,
+        ]);
+
+        return new Response('Received!', Response::HTTP_OK);
+    }
+
+    private function createProduct($webhookData, EntityManagerInterface $em, ProductsRepository $productsRepository): void {
+
+        $this->logger->info('Creation product', $webhookData);
+        $product = new Products();
+        $this->mapDataToProducts($product, $webhookData, $productsRepository);
+        $em->persist($product);
+        $em->flush();
+    }
+
+    private function updateProduct($webhookData, EntityManagerInterface $em, ProductsRepository $productsRepository): void {
+
+        $this->logger->info('Update product', $webhookData);
+        $product = $productsRepository->find($webhookData["data"]["id"]);
+        if (!$product) {
+            throw new \Exception("Product with ID " . $webhookData["data"]["id"] . " not found.");
+        }
+        $this->mapDataToProducts($product, $webhookData, $productsRepository);
+        $em->flush();
+    }
+
+    private function deleteProduct($webhookData, EntityManagerInterface $em, ProductsRepository $productsRepository): void {
+
+        $this->logger->INFO('Suppression: ', $webhookData);
+        
+        $product = $productsRepository->find($webhookData["data"]["id"]);
+        $em->remove($product);
+        $em->flush();
+    }
+
+    private function mapDataToProducts(Products $products, $webhookData): void {
+
+        $products->setId($webhookData["data"]["id"]);
+        $products->setName($webhookData["data"]["name"]);
+        $products->setProductCode($webhookData["data"]["product_code"]);
+        $products->setSupplierProductCode(($webhookData["data"]["supplier_product_code"]));
+        $products->setDescription($webhookData["data"]["description"]);
+        $products->setPrice($webhookData["data"]["price"]);
+        $products->setPriceWithTax($webhookData["data"]["price_with_tax"]);
+        $products->setTaxRate($webhookData["data"]["tax_rate"]);
+        $products->setType($webhookData["data"]["type"]);
+        $products->setCategory($webhookData["data"]["category"]);
+        $products->setJobCosting(floatval($webhookData["data"]["job_costing"]));
+        $products->setStock(intval($webhookData["data"]["stock"]));
+        $products->setLocation($webhookData["data"]["location"]);
+        $products->setUnit($webhookData["data"]["unit"]);
+        $products->setDisabled($webhookData["data"]["disabled"]);
+        $products->setInternalId(($webhookData["data"]["internal_id"]));
+        $products->setWeightedAverageCost(floatval($webhookData["data"]["weighted_average_cost"]));
+        $products->setImage(intval($webhookData["data"]["image"]));
+    
+    }
+
+    public function webhookProductsFilter(SessionInterface $session, EntityManagerInterface $em, ProductsRepository $productsRepository): Response {
+        $webhookData = $session->get('webhook_data');
+    
+        switch ($webhookData['topic']) {
+            case 'product.created':
+                $this->createProduct($webhookData, $em, $productsRepository);
+                break;
+            case 'product.updated':
+                $this->updateProduct($webhookData, $em, $productsRepository);
+                break;
+            case 'product.deleted':
+                $this->deleteProduct($webhookData, $em, $productsRepository);
+                break;
+        }
+    
+        return new Response('Done!', Response::HTTP_OK);
+    }
+
     // #[Route('/webhook/products', name: 'app_webhook_products', methods: 'POST')]
     // public function getWebhookProducts(Request $request, SessionInterface $session, EntityManagerInterface $em, ProductsRepository $productsRepository, LoggerInterface $logger): Response
     // {

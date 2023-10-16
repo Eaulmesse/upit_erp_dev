@@ -12,6 +12,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Repository\CompaniesRepository;
 use App\Entity\Addresses;
+use App\Repository\ProductsRepository;
+use App\Entity\Products;
 
 
 class CallApiService
@@ -120,6 +122,59 @@ class CallApiService
 
             
             $arrayNumber++;
+        }        
+        
+        
+        $entityManager->flush();
+        
+
+        
+        return $data;
+    }
+
+    public function getProductsData(EntityManagerInterface $entityManager, ProductsRepository $productsRepository): array
+    {
+        $response = $this->client->request(
+            'GET',
+            'https://axonaut.com/api/v2/products',
+            [
+                'headers' => [
+                    'userApiKey' => $_ENV['API_KEY'],
+                    // Ajoutez d'autres en-têtes si nécessaire
+                ]
+            ]
+        );
+
+        $data = $response->toArray();
+
+        dd($data);
+
+        foreach ($data as $index => $subData) {
+            
+            $product = new Products();
+            $product->setId($subData["id"]);
+            $product->setName($subData["name"]);
+            $product->setProductCode($subData["product_code"]);
+            $product->setSupplierProductCode(($subData["supplier_product_code"]));
+            $product->setDescription($subData["description"]);
+            $product->setPrice($subData["price"]);
+            $product->setPriceWithTax($subData["price_with_tax"]);
+            $product->setTaxRate($subData["tax_rate"]);
+            $product->setType($subData["type"]);
+            $product->setCategory($subData["category"]);
+            $product->setJobCosting(floatval($subData["job_costing"]));
+            $product->setStock(intval($subData["stock"]));
+            $product->setLocation($subData["location"]);
+            $product->setUnit($subData["unit"]);
+            $product->setDisabled($subData["disabled"]);
+            $product->setInternalId((intval($subData["internal_id"])));
+            $product->setWeightedAverageCost(floatval($subData["weighted_average_cost"]));
+            $product->setImage(intval($subData["image"]));
+            
+            $entityManager->persist($product);
+
+            
+
         }        
         
         
