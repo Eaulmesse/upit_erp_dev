@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 class Addresses
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -53,6 +52,13 @@ class Addresses
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(string $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getName(): ?string

@@ -8,9 +8,6 @@ webhook_companies_get:
     path: '/webhook/companies'
     controller: 'App\Controller\CompaniesController::getWebhookCompanies'
 
-webhook_companies_filter: 
-    path: '/webhook/companies/filter'
-    controller: 'App\Controller\CompaniesController::webhookCompaniesFilter'
 
 webhook_employees_get:
     path: '/webhook/employees'

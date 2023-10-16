@@ -43,6 +43,10 @@ class CompaniesController extends AbstractController
 
         $this->webhookCompaniesFilter($session, $em, $addressesRepository, $companiesRepository);
 
+        return $this->forward('App\Controller\AddressesController::GetWebhookFromCompanies', [
+            'responseData' => $response,
+        ]);
+
         return new Response('Received!', Response::HTTP_OK);
     }
 

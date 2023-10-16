@@ -140,15 +140,6 @@ class QuotationsController extends AbstractController
         return new Response('Done!', Response::HTTP_OK);
     }
     
-    
-    
-    private function getDateTimeOrDefault($data, $default = ''): ?\DateTime {
-        if ($data !== null) {
-            return new \DateTime($data);
-        }
-    
-        return $default !== '' ? new \DateTime($default) : null;
-    }   
 
 
     // VERIFICATION ET AJOUT
