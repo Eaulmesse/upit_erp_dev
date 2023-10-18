@@ -55,6 +55,7 @@ class AddressesController extends AbstractController
     
 
     public function AddressesToDatabase($responseData, AddressesRepository $addressesRepository, LoggerInterface $logger, SessionInterface $session, EntityManagerInterface $em, CompaniesRepository $companiesRepository): Response {
+        
         $dataAPI = $this->FetchAddressesData($responseData, $addressesRepository, $logger, $session, $em);
 
         $currentAddresseIds = []; 

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\QuotationsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
 class Quotations
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -89,20 +90,19 @@ class Quotations
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $customer_portal_url = null;
 
-    // #[ORM\ManyToOne(inversedBy: 'quotations')]
-    // private ?Users $users = null;
+    #[ORM\OneToMany(mappedBy: 'quotations_id', targetEntity: QuotationLines::class)]
+    private Collection $quotation_lines;
 
-    // #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    // private ?Projects $projects = null;
+    public function __construct()
+    {
+        $this->quotation_lines = new ArrayCollection();
+    }
 
-    // #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    // private ?Opportunities $opportunities = null;
 
-    // #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    // private ?Contracts $contract = null;
 
-    // #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    // private ?QuotationLines $quotation_line = null;
+    
+
+
 
     public function getId(): ?int
     {
@@ -416,63 +416,37 @@ class Quotations
         return $this;
     }
 
-    // public function getUsers(): ?Users
-    // {
-    //     return $this->users;
-    // }
+    /**
+     * @return Collection<int, QuotationLines>
+     */
+    public function getQuotationLines(): Collection
+    {
+        return $this->quotation_lines;
+    }
 
-    // public function setUsers(?Users $users): static
-    // {
-    //     $this->users = $users;
+    public function addQuotationLine(QuotationLines $quotationLine): static
+    {
+        if (!$this->quotation_lines->contains($quotationLine)) {
+            $this->quotation_lines->add($quotationLine);
+            $quotationLine->setQuotationsId($this);
+        }
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
-    // public function getProjects(): ?Projects
-    // {
-    //     return $this->projects;
-    // }
+    public function removeQuotationLine(QuotationLines $quotationLine): static
+    {
+        if ($this->quotation_lines->removeElement($quotationLine)) {
+            // set the owning side to null (unless already changed)
+            if ($quotationLine->getQuotationsId() === $this) {
+                $quotationLine->setQuotationsId(null);
+            }
+        }
 
-    // public function setProjects(?Projects $projects): static
-    // {
-    //     $this->projects = $projects;
+        return $this;
+    }
 
-    //     return $this;
-    // }
+   
 
-    // public function getOpportunities(): ?Opportunities
-    // {
-    //     return $this->opportunities;
-    // }
-
-    // public function setOpportunities(?Opportunities $opportunities): static
-    // {
-    //     $this->opportunities = $opportunities;
-
-    //     return $this;
-    // }
-
-    // public function getContract(): ?Contracts
-    // {
-    //     return $this->contract;
-    // }
-
-    // public function setContract(?Contracts $contract): static
-    // {
-    //     $this->contract = $contract;
-
-    //     return $this;
-    // }
-
-    // public function getQuotationLine(): ?QuotationLines
-    // {
-    //     return $this->quotation_line;
-    // }
-
-    // public function setQuotationLine(?QuotationLines $quotation_line): static
-    // {
-    //     $this->quotation_line = $quotation_line;
-
-    //     return $this;
-    // }
+   
 }

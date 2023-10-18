@@ -8,7 +8,7 @@ webhook_companies_get:
     path: '/webhook/companies'
     controller: 'App\Controller\CompaniesController::getWebhookCompanies'
 
-
+# EMPLOYEES ROUTE
 webhook_employees_get:
     path: '/webhook/employees'
     controller: 'App\Controller\EmployeesController::getWebhookEmployees' 
@@ -17,3 +17,8 @@ webhook_employees_get:
 webhook_products_get:
     path: '/webhook/products'
     controller: 'App\Controller\ProductsController::getWebhookProducts'
+
+# QUOTATION ROUTE
+webhook_quotations_get:
+    path: '/webhook/quotations'
+    controller: 'App\Controller\ProductsController::getWebhookQuotations'

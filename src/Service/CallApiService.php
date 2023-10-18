@@ -47,10 +47,10 @@ class CallApiService
 
         foreach ($data as $index => $subData) {
             
-            if($arrayNumber == 189) {
-                $entityManager->flush();
-                return $subData;
-            }
+            // if($arrayNumber == 189) {
+            //     $entityManager->flush();
+            //     return $subData;
+            // }
 
             // Enregistrement des companies
             $dataCompanies = new Companies();
@@ -84,42 +84,40 @@ class CallApiService
             // Enregistrement des Addresses
 
             
-            $finalUrl = str_replace('{companyId}', $subData['id'], $urlAddresses);
-            $responseAddresses = $this->client->request('GET', $finalUrl, [
-                'headers' => [
-                    'userApiKey' => $_ENV['API_KEY'],
-                ]
-            ]);
+            // $finalUrl = str_replace('{companyId}', $subData['id'], $urlAddresses);
+            // $responseAddresses = $this->client->request('GET', $finalUrl, [
+            //     'headers' => [
+            //         'userApiKey' => $_ENV['API_KEY'],
+            //     ]
+            // ]);
 
             
-            $dataAddresses = $responseAddresses->toArray();
+            // $dataAddresses = $responseAddresses->toArray();
 
-            // dd($dataAddresses[$arrayNumber]);
-            foreach ($dataAddresses as $addressesData) {
-                $newAddresse = new Addresses();
             
-                $newAddresse->setId($addressesData['id']);
-                $newAddresse->setName($addressesData['name']);
-                $newAddresse->setName($addressesData['name']);
-                $newAddresse->setContactName($addressesData['contact_name']);
-                $newAddresse->setCompanyName($addressesData['company_name']);
-                $newAddresse->setAddressStreet($addressesData['address_street']);
-                $newAddresse->setAddressZipCode($addressesData['address_zip_code']);
-                $newAddresse->setAddressCity($addressesData['address_city']);
-                $newAddresse->setAddressRegion($addressesData['address_region']);
-                $newAddresse->setAddressCountry($addressesData['address_country']);
-                $newAddresse->setIsForInvoice($addressesData['is_for_invoice']);
-                $newAddresse->setIsForDelivery($addressesData['is_for_delivery']);
-                $newAddresse->setIsForQuotation($addressesData['is_for_quotation']);
-                $newAddresse->setIsForDelivery($addressesData['is_for_delivery']);
+            // foreach ($dataAddresses as $addressesData) {
+            //     $newAddresse = new Addresses();
+            
+            //     $newAddresse->setId($addressesData['id']);
+            //     $newAddresse->setName($addressesData['name']);
+            //     $newAddresse->setName($addressesData['name']);
+            //     $newAddresse->setContactName($addressesData['contact_name']);
+            //     $newAddresse->setCompanyName($addressesData['company_name']);
+            //     $newAddresse->setAddressStreet($addressesData['address_street']);
+            //     $newAddresse->setAddressZipCode($addressesData['address_zip_code']);
+            //     $newAddresse->setAddressCity($addressesData['address_city']);
+            //     $newAddresse->setAddressRegion($addressesData['address_region']);
+            //     $newAddresse->setAddressCountry($addressesData['address_country']);
+            //     $newAddresse->setIsForInvoice($addressesData['is_for_invoice']);
+            //     $newAddresse->setIsForDelivery($addressesData['is_for_delivery']);
+            //     $newAddresse->setIsForQuotation($addressesData['is_for_quotation']);
+            //     $newAddresse->setIsForDelivery($addressesData['is_for_delivery']);
         
-                $company = $companiesRepository->find($addressesData['company']['id']);
-                $newAddresse->setCompanyId($company);
+            //     $company = $companiesRepository->find($addressesData['company']['id']);
+            //     $newAddresse->setCompanyId($company);
 
-                $entityManager->persist($newAddresse);
-            }
-            
-
+            //     $entityManager->persist($newAddresse);
+            // }
             
             $arrayNumber++;
         }        

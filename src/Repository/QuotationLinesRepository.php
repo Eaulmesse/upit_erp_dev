@@ -21,6 +21,8 @@ class QuotationLinesRepository extends ServiceEntityRepository
         parent::__construct($registry, QuotationLines::class);
     }
 
+    
+
 //    /**
 //     * @return QuotationLines[] Returns an array of QuotationLines objects
 //     */

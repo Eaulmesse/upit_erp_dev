@@ -68,14 +68,14 @@ class Contracts
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $preauthorized_debit = null;
 
-    #[ORM\ManyToOne(inversedBy: 'contracts')]
-    private ?Companies $company = null;
+    // #[ORM\ManyToOne(inversedBy: 'contracts')]
+    // private ?Companies $company = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $project = null;
+    // #[ORM\Column(type: Types::TEXT, nullable: true)]
+    // private ?string $project = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?quotations $quotation = null;
+    // #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    // private ?quotations $quotation = null;
 
     public function getId(): ?int
     {
@@ -298,39 +298,39 @@ class Contracts
         return $this;
     }
 
-    public function getCompany(): ?Companies
-    {
-        return $this->company;
-    }
+    // public function getCompany(): ?Companies
+    // {
+    //     return $this->company;
+    // }
 
-    public function setCompany(?Companies $company): static
-    {
-        $this->company = $company;
+    // public function setCompany(?Companies $company): static
+    // {
+    //     $this->company = $company;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getProject(): ?string
-    {
-        return $this->project;
-    }
+    // public function getProject(): ?string
+    // {
+    //     return $this->project;
+    // }
 
-    public function setProject(?string $project): static
-    {
-        $this->project = $project;
+    // public function setProject(?string $project): static
+    // {
+    //     $this->project = $project;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getQuotation(): ?quotations
-    {
-        return $this->quotation;
-    }
+    // public function getQuotation(): ?quotations
+    // {
+    //     return $this->quotation;
+    // }
 
-    public function setQuotation(?quotations $quotation): static
-    {
-        $this->quotation = $quotation;
+    // public function setQuotation(?quotations $quotation): static
+    // {
+    //     $this->quotation = $quotation;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 }

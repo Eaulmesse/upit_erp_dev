@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProductsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -63,6 +65,18 @@ class Products
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $image = null;
+
+    #[ORM\OneToMany(mappedBy: 'products', targetEntity: QuotationLines::class)]
+    private Collection $quotation_lines;
+
+    public function __construct()
+    {
+        $this->quotation_lines = new ArrayCollection();
+    }
+
+    
+
+   
 
 
     public function getId(): ?int
@@ -280,5 +294,38 @@ class Products
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, QuotationLines>
+     */
+    public function getQuotationLines(): Collection
+    {
+        return $this->quotation_lines;
+    }
+
+    public function addQuotationLine(QuotationLines $quotationLine): static
+    {
+        if (!$this->quotation_lines->contains($quotationLine)) {
+            $this->quotation_lines->add($quotationLine);
+            $quotationLine->setProducts($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuotationLine(QuotationLines $quotationLine): static
+    {
+        if ($this->quotation_lines->removeElement($quotationLine)) {
+            // set the owning side to null (unless already changed)
+            if ($quotationLine->getProducts() === $this) {
+                $quotationLine->setProducts(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    
 
 }

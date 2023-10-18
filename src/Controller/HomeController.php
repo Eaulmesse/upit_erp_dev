@@ -19,7 +19,7 @@ class HomeController extends AbstractController
     {
 
         // dd($callApiService->getCompaniesData($entityManager, $companiesRepository));
-        dd($callApiService->getProductsData($entityManager, $productRepository));
+        // dd($callApiService->getProductsData($entityManager, $productRepository));
         
         
 

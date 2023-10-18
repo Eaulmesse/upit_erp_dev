@@ -70,13 +70,17 @@ class QuotationLines
     #[ORM\Column(type: Types::TEXT)]
     private ?string $chapter = null;
 
-    #[ORM\OneToMany(mappedBy: 'quotationLines', targetEntity: Products::class)]
-    private Collection $product;
+    #[ORM\Column(nullable: true)]
+    private ?int $quantity = null;
 
-    public function __construct()
-    {
-        $this->product = new ArrayCollection();
-    }
+
+    #[ORM\ManyToOne(inversedBy: 'quotation_lines')]
+    private ?Quotations $quotations = null;
+
+    #[ORM\ManyToOne(inversedBy: 'quotation_lines')]
+    private ?Products $products = null;
+
+
 
     public function getId(): ?int
     {
@@ -139,6 +143,18 @@ class QuotationLines
     public function setDetails(string $details): static
     {
         $this->details = $details;
+
+        return $this;
+    }
+
+    public function getQuantity(): ?int
+    {
+        return $this->quantity;
+    }
+
+    public function setQuantity(?int $quantity): static
+    {
+        $this->quantity = $quantity;
 
         return $this;
     }
@@ -299,33 +315,36 @@ class QuotationLines
         return $this;
     }
 
-    /**
-     * @return Collection<int, Products>
-     */
-    public function getProduct(): Collection
+    
+
+    public function getQuotationsId(): ?Quotations
     {
-        return $this->product;
+        return $this->quotations;
     }
 
-    // public function addProduct(Products $product): static
-    // {
-    //     if (!$this->product->contains($product)) {
-    //         $this->product->add($product);
-    //         $product->setQuotationLines($this);
-    //     }
+    public function setQuotationsId(?Quotations $quotations): static
+    {
+        $this->quotations = $quotations;
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
-    // public function removeProduct(Products $product): static
-    // {
-    //     if ($this->product->removeElement($product)) {
-    //         // set the owning side to null (unless already changed)
-    //         if ($product->getQuotationLines() === $this) {
-    //             $product->setQuotationLines(null);
-    //         }
-    //     }
+    public function getProducts(): ?Products
+    {
+        return $this->products;
+    }
 
-    //     return $this;
-    // }
+    public function setProducts(?Products $products): static
+    {
+        $this->products = $products;
+
+        return $this;
+    }
+
+
+
+
+    
+    
+
 }

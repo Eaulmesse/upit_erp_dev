@@ -40,6 +40,10 @@ class QuotationsController extends AbstractController
         $session->set('webhook_data', $response);
         $this->logger->info('Quotation received!', $response);
         $this->webhookQuotationsFilter($session, $em, $quotationsRepository, $companiesRepository, $logger);
+
+        return $this->forward('App\Controller\QuotationLinesController::GetWebhookFromQuotationLines', [
+            'responseData' => $response,
+        ]);
     
         return new Response('Received!', Response::HTTP_OK);
     }
@@ -53,6 +57,7 @@ class QuotationsController extends AbstractController
     }
     
     private function updateQuotation($webhookData, EntityManagerInterface $em, CompaniesRepository $companiesRepository, QuotationsRepository $quotationsRepository): void {
+        $this->logger->info('Update response!', $webhookData);
         $quotation = $quotationsRepository->find($webhookData["data"]["id"]);
         if (!$quotation) {
             throw new \Exception("Quotation with ID " . $webhookData["data"]["id"] . " not found.");
@@ -62,7 +67,8 @@ class QuotationsController extends AbstractController
     }
     
     private function mapDataToQuotation(Quotations $quotation, $webhookData, CompaniesRepository $companiesRepository): void {
-        
+        $this->logger->info('Map Response', $webhookData);
+
         $quotation->setId($webhookData['data']["id"]);
         $quotation->setNumber($webhookData['data']["number"]);
         $quotation->setTitle($webhookData['data']["title"]);
@@ -121,6 +127,10 @@ class QuotationsController extends AbstractController
             throw new \Exception("Company not found with ID " . $webhookData["data"]["company_id"]);
         }
         $quotation->setCompany($companyEntity);
+
+        $quotation->setComments($webhookData['data']["comments"]);
+        $quotation->setPublicPath($webhookData['data']["public_path"]);
+        $quotation->setCustomerPortalUrl($webhookData['data']["customer_portal_url"]);
     }
     
     public function webhookQuotationsFilter(SessionInterface $session, EntityManagerInterface $em, QuotationsRepository $quotationsRepository, CompaniesRepository $companiesRepository, $logger): Response {
@@ -180,7 +190,7 @@ class QuotationsController extends AbstractController
     private function mapToQuotationEntity(array $quotation, $companiesRepository): Quotations {
 
     
-        $this->logger->INFO('DATA NULL: ', $quotation);
+        // $this->logger->INFO('DATA NULL: ', $quotation);
 
         $dataQuotations = new Quotations();
 
