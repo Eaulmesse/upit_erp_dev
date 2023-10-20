@@ -12,26 +12,25 @@ use Doctrine\ORM\Mapping as ORM;
 class Workforces
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $gender = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $firstname = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastname = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $birth = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $address_street = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -40,13 +39,13 @@ class Workforces
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address_city = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $job = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $phone = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $entry_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
@@ -55,12 +54,13 @@ class Workforces
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $thirdparty_code = null;
 
-    #[ORM\OneToMany(mappedBy: 'workforce', targetEntity: Projects::class)]
-    private Collection $projects;
+
+    #[ORM\OneToMany(mappedBy: 'workforces', targetEntity: Payslips::class)]
+    private Collection $payslips;
 
     public function __construct()
     {
-        $this->projects = new ArrayCollection();
+        $this->payslips = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -68,12 +68,19 @@ class Workforces
         return $this->id;
     }
 
+    public function setId(string $id): static
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
 
@@ -85,7 +92,7 @@ class Workforces
         return $this->gender;
     }
 
-    public function setGender(string $gender): static
+    public function setGender(?string $gender): static
     {
         $this->gender = $gender;
 
@@ -97,7 +104,7 @@ class Workforces
         return $this->firstname;
     }
 
-    public function setFirstname(string $firstname): static
+    public function setFirstname(?string $firstname): static
     {
         $this->firstname = $firstname;
 
@@ -109,7 +116,7 @@ class Workforces
         return $this->lastname;
     }
 
-    public function setLastname(string $lastname): static
+    public function setLastname(?string $lastname): static
     {
         $this->lastname = $lastname;
 
@@ -133,7 +140,7 @@ class Workforces
         return $this->address_street;
     }
 
-    public function setAddressStreet(string $address_street): static
+    public function setAddressStreet(?string $address_street): static
     {
         $this->address_street = $address_street;
 
@@ -181,7 +188,7 @@ class Workforces
         return $this->phone;
     }
 
-    public function setPhone(string $phone): static
+    public function setPhone(?string $phone): static
     {
         $this->phone = $phone;
 
@@ -193,7 +200,7 @@ class Workforces
         return $this->entry_date;
     }
 
-    public function setEntryDate(\DateTimeInterface $entry_date): static
+    public function setEntryDate(?\DateTimeInterface $entry_date): static
     {
         $this->entry_date = $entry_date;
 
@@ -225,32 +232,33 @@ class Workforces
     }
 
     /**
-     * @return Collection<int, Projects>
+     * @return Collection<int, Payslips>
      */
-    public function getProjects(): Collection
+    public function getPayslips(): Collection
     {
-        return $this->projects;
+        return $this->payslips;
     }
 
-    public function addProject(Projects $project): static
+    public function addPayslip(Payslips $payslip): static
     {
-        if (!$this->projects->contains($project)) {
-            $this->projects->add($project);
-            $project->setWorkforce($this);
+        if (!$this->payslips->contains($payslip)) {
+            $this->payslips->add($payslip);
+            $payslip->setWorkforces($this);
         }
 
         return $this;
     }
 
-    public function removeProject(Projects $project): static
+    public function removePayslip(Payslips $payslip): static
     {
-        if ($this->projects->removeElement($project)) {
+        if ($this->payslips->removeElement($payslip)) {
             // set the owning side to null (unless already changed)
-            if ($project->getWorkforce() === $this) {
-                $project->setWorkforce(null);
+            if ($payslip->getWorkforces() === $this) {
+                $payslip->setWorkforces(null);
             }
         }
 
         return $this;
     }
+
 }

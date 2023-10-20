@@ -22,3 +22,14 @@ webhook_products_get:
 webhook_quotations_get:
     path: '/webhook/quotations'
     controller: 'App\Controller\ProductsController::getWebhookQuotations'
+
+# USERS ROUTE
+app_get_users:
+    path: '/users/get'
+    controller: 'App\Controller\UsersController::callAPI'
+
+# WORKFORCES ROUTE
+app_get_workforces:
+    path: '/workforces/get'
+    controller: 'App\Controller\WorkforcesController::callAPI'
+

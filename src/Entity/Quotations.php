@@ -97,13 +97,6 @@ class Quotations
     {
         $this->quotation_lines = new ArrayCollection();
     }
-
-
-
-    
-
-
-
     public function getId(): ?int
     {
         return $this->id;

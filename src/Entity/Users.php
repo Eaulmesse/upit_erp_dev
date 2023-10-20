@@ -12,14 +12,13 @@ use Doctrine\ORM\Mapping as ORM;
 class Users
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $full_name = null;
 
     #[ORM\Column(length: 255)]
@@ -28,16 +27,16 @@ class Users
     #[ORM\Column(length: 255)]
     private ?string $lastname = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $phone_number = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $cellphone_number = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $company_natures = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $roles = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Contracts::class)]
@@ -55,6 +54,13 @@ class Users
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(string $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getEmail(): ?string
@@ -110,7 +116,7 @@ class Users
         return $this->phone_number;
     }
 
-    public function setPhoneNumber(string $phone_number): static
+    public function setPhoneNumber(?string $phone_number): static
     {
         $this->phone_number = $phone_number;
 
@@ -122,7 +128,7 @@ class Users
         return $this->cellphone_number;
     }
 
-    public function setCellphoneNumber(string $cellphone_number): static
+    public function setCellphoneNumber(?string $cellphone_number): static
     {
         $this->cellphone_number = $cellphone_number;
 
@@ -134,7 +140,7 @@ class Users
         return $this->company_natures;
     }
 
-    public function setCompanyNatures(string $company_natures): static
+    public function setCompanyNatures(?string $company_natures): static
     {
         $this->company_natures = $company_natures;
 
@@ -146,7 +152,7 @@ class Users
         return $this->roles;
     }
 
-    public function setRoles(string $roles): static
+    public function setRoles(?string $roles): static
     {
         $this->roles = $roles;
 
@@ -177,36 +183,6 @@ class Users
             // set the owning side to null (unless already changed)
             if ($contract->getUser() === $this) {
                 $contract->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Quotations>
-     */
-    public function getQuotations(): Collection
-    {
-        return $this->quotations;
-    }
-
-    public function addQuotation(Quotations $quotation): static
-    {
-        if (!$this->quotations->contains($quotation)) {
-            $this->quotations->add($quotation);
-            $quotation->setUsers($this);
-        }
-
-        return $this;
-    }
-
-    public function removeQuotation(Quotations $quotation): static
-    {
-        if ($this->quotations->removeElement($quotation)) {
-            // set the owning side to null (unless already changed)
-            if ($quotation->getUsers() === $this) {
-                $quotation->setUsers(null);
             }
         }
 
