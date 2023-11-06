@@ -27,7 +27,7 @@ class UsersController extends AbstractController
     #[Route('/users/get', name: 'app_get_users')]
     public function callAPI(Request $request, SessionInterface $session, EntityManagerInterface $em, UsersRepository $usersRepository, LoggerInterface $logger): Response
     {
-
+ 
         $response = $this->client->request(
             'GET',
             'https://axonaut.com/api/v2/users',
@@ -93,8 +93,10 @@ class UsersController extends AbstractController
         $user->setFirstname($userData['firstname']);
         $user->setLastname($userData['lastname']);
         $user->setPhoneNumber($userData['phone_number']);
-        $user->setCellphoneNumber($userData['company_natures']);
-        $user->setCompanyNatures($userData['roles']);
+        $user->setCellphoneNumber($userData['cellphone_number']);
+        $user->setCompanyNatures($userData['company_natures']);
+        $user->setRoles($userData['roles']);
+
 
         return $user;
     }
