@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ContractsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -53,8 +55,6 @@ class Contracts
     #[ORM\Column(type: Types::TEXT)]
     private ?string $country = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $delivery_address = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $first_invoice_planned_date = null;
@@ -68,18 +68,52 @@ class Contracts
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $preauthorized_debit = null;
 
-    // #[ORM\ManyToOne(inversedBy: 'contracts')]
-    // private ?Companies $company = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $last_update_date = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $invoice_address_street = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $invoice_address_city = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $delivery_address_street = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $delivery_address_city = null;
+
+    #[ORM\ManyToOne(inversedBy: 'contracts')]
+    private ?Companies $company = null;
 
     // #[ORM\Column(type: Types::TEXT, nullable: true)]
     // private ?string $project = null;
 
-    // #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    // private ?quotations $quotation = null;
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?quotations $quotation = null;
+
+    #[ORM\OneToMany(mappedBy: 'contract', targetEntity: Invoices::class)]
+    private Collection $project;
+
+    #[ORM\OneToMany(mappedBy: 'contracts', targetEntity: Invoices::class)]
+    private Collection $invoices;
+
+    public function __construct()
+    {
+        $this->project = new ArrayCollection();
+        $this->invoices = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getName(): ?string
@@ -238,18 +272,6 @@ class Contracts
         return $this;
     }
 
-    public function getDeliveryAddress(): ?string
-    {
-        return $this->delivery_address;
-    }
-
-    public function setDeliveryAddress(?string $delivery_address): static
-    {
-        $this->delivery_address = $delivery_address;
-
-        return $this;
-    }
-
     public function getFirstInvoicePlannedDate(): ?\DateTimeInterface
     {
         return $this->first_invoice_planned_date;
@@ -298,17 +320,17 @@ class Contracts
         return $this;
     }
 
-    // public function getCompany(): ?Companies
-    // {
-    //     return $this->company;
-    // }
+    public function getCompany(): ?Companies
+    {
+        return $this->company;
+    }
 
-    // public function setCompany(?Companies $company): static
-    // {
-    //     $this->company = $company;
+    public function setCompany(?Companies $company): static
+    {
+        $this->company = $company;
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
     // public function getProject(): ?string
     // {
@@ -322,15 +344,135 @@ class Contracts
     //     return $this;
     // }
 
-    // public function getQuotation(): ?quotations
-    // {
-    //     return $this->quotation;
-    // }
+    public function getQuotation(): ?quotations
+    {
+        return $this->quotation;
+    }
 
-    // public function setQuotation(?quotations $quotation): static
-    // {
-    //     $this->quotation = $quotation;
+    public function setQuotation(?quotations $quotation): static
+    {
+        $this->quotation = $quotation;
 
-    //     return $this;
-    // }
+        return $this;
+    }
+
+    public function getLastUpdateDate(): ?\DateTimeInterface
+    {
+        return $this->last_update_date;
+    }
+
+    public function setLastUpdateDate(?\DateTimeInterface $last_update_date): static
+    {
+        $this->last_update_date = $last_update_date;
+
+        return $this;
+    }
+
+    public function getInvoiceAddressStreet(): ?string
+    {
+        return $this->invoice_address_street;
+    }
+
+    public function setInvoiceAddressStreet(string $invoice_address_street): static
+    {
+        $this->invoice_address_street = $invoice_address_street;
+
+        return $this;
+    }
+
+    public function getInvoiceAddressCity(): ?string
+    {
+        return $this->invoice_address_city;
+    }
+
+    public function setInvoiceAddressCity(string $invoice_address_city): static
+    {
+        $this->invoice_address_city = $invoice_address_city;
+
+        return $this;
+    }
+
+    public function getDeliveryAddressStreet(): ?string
+    {
+        return $this->delivery_address_street;
+    }
+
+    public function setDeliveryAddressStreet(?string $delivery_address_street): static
+    {
+        $this->delivery_address_street = $delivery_address_street;
+
+        return $this;
+    }
+
+    public function getDeliveryAddressCity(): ?string
+    {
+        return $this->delivery_address_city;
+    }
+
+    public function setDeliveryAddressCity(?string $delivery_address_city): static
+    {
+        $this->delivery_address_city = $delivery_address_city;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Invoices>
+     */
+    public function getProject(): Collection
+    {
+        return $this->project;
+    }
+
+    public function addProject(Invoices $project): static
+    {
+        if (!$this->project->contains($project)) {
+            $this->project->add($project);
+            $project->setContract($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProject(Invoices $project): static
+    {
+        if ($this->project->removeElement($project)) {
+            // set the owning side to null (unless already changed)
+            if ($project->getContract() === $this) {
+                $project->setContract(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Invoices>
+     */
+    public function getInvoices(): Collection
+    {
+        return $this->invoices;
+    }
+
+    public function addInvoice(Invoices $invoice): static
+    {
+        if (!$this->invoices->contains($invoice)) {
+            $this->invoices->add($invoice);
+            $invoice->setContracts($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInvoice(Invoices $invoice): static
+    {
+        if ($this->invoices->removeElement($invoice)) {
+            // set the owning side to null (unless already changed)
+            if ($invoice->getContracts() === $this) {
+                $invoice->setContracts(null);
+            }
+        }
+
+        return $this;
+    }
 }

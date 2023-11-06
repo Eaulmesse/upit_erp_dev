@@ -58,9 +58,13 @@ class Workforces
     #[ORM\OneToMany(mappedBy: 'workforces', targetEntity: Payslips::class)]
     private Collection $payslips;
 
+    #[ORM\ManyToMany(targetEntity: Projects::class, mappedBy: 'workforces')]
+    private Collection $projects;
+
     public function __construct()
     {
         $this->payslips = new ArrayCollection();
+        $this->projects = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -256,6 +260,33 @@ class Workforces
             if ($payslip->getWorkforces() === $this) {
                 $payslip->setWorkforces(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Projects>
+     */
+    public function getProjects(): Collection
+    {
+        return $this->projects;
+    }
+
+    public function addProject(Projects $project): static
+    {
+        if (!$this->projects->contains($project)) {
+            $this->projects->add($project);
+            $project->addWorkforce($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProject(Projects $project): static
+    {
+        if ($this->projects->removeElement($project)) {
+            $project->removeWorkforce($this);
         }
 
         return $this;

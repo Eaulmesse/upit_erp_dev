@@ -83,6 +83,9 @@ class Companies
     #[ORM\OneToMany(mappedBy: 'company', targetEntity: Opportunities::class)]
     private Collection $opportunities;
 
+    #[ORM\ManyToMany(targetEntity: Projects::class, mappedBy: 'company')]
+    private Collection $projects;
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
@@ -90,6 +93,7 @@ class Companies
         // $this->company_name = new ArrayCollection();
         $this->quotations = new ArrayCollection();
         $this->opportunities = new ArrayCollection();
+        $this->projects = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -437,6 +441,43 @@ class Companies
             if ($opportunity->getCompany() === $this) {
                 $opportunity->setCompany(null);
             }
+        }
+
+        return $this;
+    }
+
+    public function getInvoiceAddresses(): Collection
+    {
+        // Utilisez une boucle foreach ou array_filter pour filtrer les adresses
+        $invoiceAddresses = $this->addresses->filter(function ($addresses) {
+            return $addresses->getIsForInvoice() === true;
+        });
+
+        return $invoiceAddresses;
+    }
+
+    /**
+     * @return Collection<int, Projects>
+     */
+    public function getProjects(): Collection
+    {
+        return $this->projects;
+    }
+
+    public function addProject(Projects $project): static
+    {
+        if (!$this->projects->contains($project)) {
+            $this->projects->add($project);
+            $project->addCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProject(Projects $project): static
+    {
+        if ($this->projects->removeElement($project)) {
+            $project->removeCompany($this);
         }
 
         return $this;
