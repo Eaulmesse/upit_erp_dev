@@ -128,7 +128,7 @@ class EmployeesController extends AbstractController
     }
 
     #[Route('/webhook/companies/filter', name: 'app_webhook_companies_filter')]
-    public function webhookEmployeesFilter(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, EmployeesRepository $employeesRepository): Response 
+    public function webhookEmployeesFilter(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger): Response 
     {
         $webhookData = $session->get('webhook_data');
         
