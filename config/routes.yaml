@@ -33,3 +33,9 @@ app_get_workforces:
     path: '/workforces/get'
     controller: 'App\Controller\WorkforcesController::callAPI'
 
+# PAYSLIPS ROUTE
+app_get_payslips:
+    path: '/payslips/get'
+    controller: 'App\Controller\PayslipsController::callAPI'
+
+

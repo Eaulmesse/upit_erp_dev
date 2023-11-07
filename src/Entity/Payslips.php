@@ -19,10 +19,10 @@ class Payslips
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $start_date = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $end_date = null;
 
     #[ORM\Column]
@@ -34,15 +34,12 @@ class Payslips
     #[ORM\Column]
     private ?float $total_hours = null;
 
-    #[ORM\ManyToOne(inversedBy: 'payslips')]
-    private ?Workforces $workforces = null;
-
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?Workforces $id): static
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -133,15 +130,4 @@ class Payslips
         return $this;
     }
 
-    public function getWorkforces(): ?Workforces
-    {
-        return $this->workforces;
-    }
-
-    public function setWorkforces(?Workforces $workforces): static
-    {
-        $this->workforces = $workforces;
-
-        return $this;
-    }
 }

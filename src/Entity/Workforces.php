@@ -54,16 +54,11 @@ class Workforces
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $thirdparty_code = null;
 
-
-    #[ORM\OneToMany(mappedBy: 'workforces', targetEntity: Payslips::class)]
-    private Collection $payslips;
-
     #[ORM\ManyToMany(targetEntity: Projects::class, mappedBy: 'workforces')]
     private Collection $projects;
 
     public function __construct()
     {
-        $this->payslips = new ArrayCollection();
         $this->projects = new ArrayCollection();
     }
 
@@ -72,7 +67,7 @@ class Workforces
         return $this->id;
     }
 
-    public function setId(string $id): static
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -235,35 +230,6 @@ class Workforces
         return $this;
     }
 
-    /**
-     * @return Collection<int, Payslips>
-     */
-    public function getPayslips(): Collection
-    {
-        return $this->payslips;
-    }
-
-    public function addPayslip(Payslips $payslip): static
-    {
-        if (!$this->payslips->contains($payslip)) {
-            $this->payslips->add($payslip);
-            $payslip->setWorkforces($this);
-        }
-
-        return $this;
-    }
-
-    public function removePayslip(Payslips $payslip): static
-    {
-        if ($this->payslips->removeElement($payslip)) {
-            // set the owning side to null (unless already changed)
-            if ($payslip->getWorkforces() === $this) {
-                $payslip->setWorkforces(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Projects>
