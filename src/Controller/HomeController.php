@@ -18,7 +18,7 @@ class HomeController extends AbstractController
     public function index(CallApiService $callApiService, EntityManagerInterface $entityManager, CompaniesRepository $companiesRepository, ProductsRepository $productRepository): Response
     {
 
-        // dd($callApiService->getCompaniesData($entityManager, $companiesRepository));
+        dd($callApiService->getCompaniesData($entityManager, $companiesRepository));
         // dd($callApiService->getProductsData($entityManager, $productRepository));
         
         

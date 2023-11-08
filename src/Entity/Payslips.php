@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PayslipsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -33,6 +35,14 @@ class Payslips
 
     #[ORM\Column]
     private ?float $total_hours = null;
+
+    #[ORM\OneToMany(mappedBy: 'payslips', targetEntity: Expenses::class)]
+    private Collection $expenses;
+
+    public function __construct()
+    {
+        $this->expenses = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -126,6 +136,36 @@ class Payslips
     public function setTotalHours(float $total_hours): static
     {
         $this->total_hours = $total_hours;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Expenses>
+     */
+    public function getExpenses(): Collection
+    {
+        return $this->expenses;
+    }
+
+    public function addExpense(Expenses $expense): static
+    {
+        if (!$this->expenses->contains($expense)) {
+            $this->expenses->add($expense);
+            $expense->setPayslips($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExpense(Expenses $expense): static
+    {
+        if ($this->expenses->removeElement($expense)) {
+            // set the owning side to null (unless already changed)
+            if ($expense->getPayslips() === $this) {
+                $expense->setPayslips(null);
+            }
+        }
 
         return $this;
     }

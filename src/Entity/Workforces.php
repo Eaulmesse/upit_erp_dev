@@ -57,9 +57,13 @@ class Workforces
     #[ORM\ManyToMany(targetEntity: Projects::class, mappedBy: 'workforces')]
     private Collection $projects;
 
+    #[ORM\OneToMany(mappedBy: 'workforce', targetEntity: Expenses::class)]
+    private Collection $expenses;
+
     public function __construct()
     {
         $this->projects = new ArrayCollection();
+        $this->expenses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -253,6 +257,36 @@ class Workforces
     {
         if ($this->projects->removeElement($project)) {
             $project->removeWorkforce($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Expenses>
+     */
+    public function getExpenses(): Collection
+    {
+        return $this->expenses;
+    }
+
+    public function addExpense(Expenses $expense): static
+    {
+        if (!$this->expenses->contains($expense)) {
+            $this->expenses->add($expense);
+            $expense->setWorkforce($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExpense(Expenses $expense): static
+    {
+        if ($this->expenses->removeElement($expense)) {
+            // set the owning side to null (unless already changed)
+            if ($expense->getWorkforce() === $this) {
+                $expense->setWorkforce(null);
+            }
         }
 
         return $this;

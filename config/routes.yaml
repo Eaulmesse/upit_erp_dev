@@ -38,4 +38,23 @@ app_get_payslips:
     path: '/payslips/get'
     controller: 'App\Controller\PayslipsController::callAPI'
 
+# EXPENSES ROUTE
+app_get_expenses:
+    path: '/expenses/get'
+    controller: 'App\Controller\ExpensesController::callAPI'
+
+# SUPPLIERS ROUTE
+app_get_suppliers:
+    path: '/suppliers/get'
+    controller: 'App\Controller\SuppliersController::callAPI'
+
+# SUPPLIERS CONTRACT ROUTE
+app_get_supplier-contracts:
+    path: '/suppliers-contract/get'
+    controller: 'App\Controller\SupplierContractController::callAPI'
+
+
+
+
+
 

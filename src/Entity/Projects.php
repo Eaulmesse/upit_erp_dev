@@ -79,10 +79,14 @@ class Projects
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $statuses_date = null;
 
+    #[ORM\OneToMany(mappedBy: 'project', targetEntity: Expenses::class)]
+    private Collection $expenses;
+
     public function __construct()
     {
         $this->company = new ArrayCollection();
         $this->workforces = new ArrayCollection();
+        $this->expenses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -362,6 +366,36 @@ class Projects
     public function setStatusesDate(\DateTimeInterface $statuses_date): static
     {
         $this->statuses_date = $statuses_date;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Expenses>
+     */
+    public function getExpenses(): Collection
+    {
+        return $this->expenses;
+    }
+
+    public function addExpense(Expenses $expense): static
+    {
+        if (!$this->expenses->contains($expense)) {
+            $this->expenses->add($expense);
+            $expense->setProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExpense(Expenses $expense): static
+    {
+        if ($this->expenses->removeElement($expense)) {
+            // set the owning side to null (unless already changed)
+            if ($expense->getProject() === $this) {
+                $expense->setProject(null);
+            }
+        }
 
         return $this;
     }

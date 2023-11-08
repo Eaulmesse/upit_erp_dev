@@ -53,7 +53,7 @@ class Companies
     private ?string $currency = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $thirdparty_code = null;
+    private ?string $thirdparty_code = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $intracommunity_number = null;
@@ -86,6 +86,9 @@ class Companies
     #[ORM\ManyToMany(targetEntity: Projects::class, mappedBy: 'company')]
     private Collection $projects;
 
+    #[ORM\OneToMany(mappedBy: 'company', targetEntity: Expenses::class)]
+    private Collection $expenses;
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
@@ -94,6 +97,7 @@ class Companies
         $this->quotations = new ArrayCollection();
         $this->opportunities = new ArrayCollection();
         $this->projects = new ArrayCollection();
+        $this->expenses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -252,12 +256,12 @@ class Companies
         return $this;
     }
 
-    public function getThirdpartyCode(): ?int
+    public function getThirdpartyCode(): ?string
     {
         return $this->thirdparty_code;
     }
 
-    public function setThirdpartyCode(int $thirdparty_code): static
+    public function setThirdpartyCode(string $thirdparty_code): static
     {
         $this->thirdparty_code = $thirdparty_code;
 
@@ -478,6 +482,36 @@ class Companies
     {
         if ($this->projects->removeElement($project)) {
             $project->removeCompany($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Expenses>
+     */
+    public function getExpenses(): Collection
+    {
+        return $this->expenses;
+    }
+
+    public function addExpense(Expenses $expense): static
+    {
+        if (!$this->expenses->contains($expense)) {
+            $this->expenses->add($expense);
+            $expense->setCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExpense(Expenses $expense): static
+    {
+        if ($this->expenses->removeElement($expense)) {
+            // set the owning side to null (unless already changed)
+            if ($expense->getCompany() === $this) {
+                $expense->setCompany(null);
+            }
         }
 
         return $this;
