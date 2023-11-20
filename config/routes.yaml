@@ -53,6 +53,18 @@ app_get_supplier-contracts:
     path: '/suppliers-contract/get'
     controller: 'App\Controller\SupplierContractController::callAPI'
 
+# PROJECT NATURE ROUTE
+app_get_projectNatures:
+    path: '/projectNatures/get'
+    controller: 'App\Controller\ProjectNaturesController::callAPI'
+
+# API ROUTE
+app_api_get:
+    path: '/api/get/{object}'
+    controller: 'App\Controller\ApiController::processApiRequest'
+
+
+
 
 
 

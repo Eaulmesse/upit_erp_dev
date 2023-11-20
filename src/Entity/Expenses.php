@@ -80,14 +80,14 @@ class Expenses
     private ?float $total_amount = null;
 
     #[ORM\OneToMany(mappedBy: 'expenses', targetEntity: ExpenseLines::class)]
-    private Collection $expense_lines;
+    private Collection $expenseLines;
 
     #[ORM\ManyToOne(inversedBy: 'expenses')]
     private ?SupplierContract $supplierContract = null;
 
     public function __construct()
     {
-        $this->expense_lines = new ArrayCollection();
+        $this->expenseLines = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -95,7 +95,7 @@ class Expenses
         return $this->id;
     }
 
-    public function setId(string $id): static
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -270,6 +270,36 @@ class Expenses
         return $this;
     }
 
+    /**
+     * @return Collection<int, ExpenseLines>
+     */
+    public function getExpenseLines(): Collection
+    {
+        return $this->expenseLines;
+    }
+
+    public function addExpenseLine(ExpenseLines $expenseLines): static
+    {
+        if (!$this->expenseLines->contains($expenseLines)) {
+            $this->expenseLines->add($expenseLines);
+            $expenseLines->setExpenses($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExpenseLine(ExpenseLines $expenseLines): static
+    {
+        if ($this->expenseLines->removeElement($expenseLines)) {
+            // set the owning side to null (unless already changed)
+            if ($expenseLines->getExpenses() === $this) {
+                $expenseLines->setExpenses(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function getPublicPath(): ?string
     {
         return $this->public_path;
@@ -278,6 +308,18 @@ class Expenses
     public function setPublicPath(?string $public_path): static
     {
         $this->public_path = $public_path;
+
+        return $this;
+    }
+
+    public function getSupplierContract(): ?SupplierContract
+    {
+        return $this->supplierContract;
+    }
+
+    public function setSupplierContract(?SupplierContract $supplierContract): static
+    {
+        $this->supplierContract = $supplierContract;
 
         return $this;
     }
@@ -354,47 +396,9 @@ class Expenses
         return $this;
     }
 
-    /**
-     * @return Collection<int, ExpenseLines>
-     */
-    public function getExpenseLines(): Collection
-    {
-        return $this->expense_lines;
-    }
+    
 
-    public function addExpenseLine(ExpenseLines $expenseLine): static
-    {
-        if (!$this->expense_lines->contains($expenseLine)) {
-            $this->expense_lines->add($expenseLine);
-            $expenseLine->setExpenses($this);
-        }
-
-        return $this;
-    }
-
-    public function removeExpenseLine(ExpenseLines $expenseLine): static
-    {
-        if ($this->expense_lines->removeElement($expenseLine)) {
-            // set the owning side to null (unless already changed)
-            if ($expenseLine->getExpenses() === $this) {
-                $expenseLine->setExpenses(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getSupplierContract(): ?SupplierContract
-    {
-        return $this->supplierContract;
-    }
-
-    public function setSupplierContract(?SupplierContract $supplierContract): static
-    {
-        $this->supplierContract = $supplierContract;
-
-        return $this;
-    }
+    
 
     
 }

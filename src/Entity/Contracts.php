@@ -89,8 +89,7 @@ class Contracts
     // #[ORM\Column(type: Types::TEXT, nullable: true)]
     // private ?string $project = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?quotations $quotation = null;
+    
 
     #[ORM\OneToMany(mappedBy: 'contract', targetEntity: Invoices::class)]
     private Collection $project;
@@ -98,10 +97,14 @@ class Contracts
     #[ORM\OneToMany(mappedBy: 'contracts', targetEntity: Invoices::class)]
     private Collection $invoices;
 
+    #[ORM\OneToMany(mappedBy: 'contract', targetEntity: Quotations::class)]
+    private Collection $quotations;
+
     public function __construct()
     {
         $this->project = new ArrayCollection();
         $this->invoices = new ArrayCollection();
+        $this->quotations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -344,17 +347,7 @@ class Contracts
     //     return $this;
     // }
 
-    public function getQuotation(): ?quotations
-    {
-        return $this->quotation;
-    }
-
-    public function setQuotation(?quotations $quotation): static
-    {
-        $this->quotation = $quotation;
-
-        return $this;
-    }
+    
 
     public function getLastUpdateDate(): ?\DateTimeInterface
     {
@@ -470,6 +463,36 @@ class Contracts
             // set the owning side to null (unless already changed)
             if ($invoice->getContracts() === $this) {
                 $invoice->setContracts(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Quotations>
+     */
+    public function getQuotations(): Collection
+    {
+        return $this->quotations;
+    }
+
+    public function addQuotation(Quotations $quotation): static
+    {
+        if (!$this->quotations->contains($quotation)) {
+            $this->quotations->add($quotation);
+            $quotation->setContract($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuotation(Quotations $quotation): static
+    {
+        if ($this->quotations->removeElement($quotation)) {
+            // set the owning side to null (unless already changed)
+            if ($quotation->getContract() === $this) {
+                $quotation->setContract(null);
             }
         }
 

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\OpportunitiesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -76,6 +78,14 @@ class Opportunities
 
     #[ORM\Column(length: 255)]
     private ?string $employee_phone_number = null;
+
+    #[ORM\OneToMany(mappedBy: 'opportunitiy', targetEntity: Quotations::class)]
+    private Collection $quotations;
+
+    public function __construct()
+    {
+        $this->quotations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -330,6 +340,36 @@ class Opportunities
     public function setEmployeePhoneNumber(string $employee_phone_number): static
     {
         $this->employee_phone_number = $employee_phone_number;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Quotations>
+     */
+    public function getQuotations(): Collection
+    {
+        return $this->quotations;
+    }
+
+    public function addQuotation(Quotations $quotation): static
+    {
+        if (!$this->quotations->contains($quotation)) {
+            $this->quotations->add($quotation);
+            $quotation->setOpportunitiy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuotation(Quotations $quotation): static
+    {
+        if ($this->quotations->removeElement($quotation)) {
+            // set the owning side to null (unless already changed)
+            if ($quotation->getOpportunitiy() === $this) {
+                $quotation->setOpportunitiy(null);
+            }
+        }
 
         return $this;
     }

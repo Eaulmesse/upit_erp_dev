@@ -27,7 +27,7 @@ class Quotations
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $expiry_date = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $sent_date = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
@@ -92,6 +92,18 @@ class Quotations
 
     #[ORM\OneToMany(mappedBy: 'quotations_id', targetEntity: QuotationLines::class)]
     private Collection $quotation_lines;
+
+    #[ORM\ManyToOne(inversedBy: 'quotations')]
+    private ?Users $user = null;
+
+    #[ORM\ManyToOne(inversedBy: 'quotations')]
+    private ?Projects $project = null;
+
+    #[ORM\ManyToOne(inversedBy: 'quotations')]
+    private ?Opportunities $opportunitiy = null;
+
+    #[ORM\ManyToOne(inversedBy: 'quotations')]
+    private ?Contracts $contract = null;
 
     public function __construct()
     {
@@ -162,7 +174,7 @@ class Quotations
         return $this->sent_date;
     }
 
-    public function setSentDate(\DateTimeInterface $sent_date): static
+    public function setSentDate(?\DateTimeInterface $sent_date): static
     {
         $this->sent_date = $sent_date;
 
@@ -205,6 +217,18 @@ class Quotations
         return $this;
     }
 
+    public function getUser(): ?Users
+    {
+        return $this->user;
+    }
+
+    public function setUser(?Users $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
     public function getCompany(): ?Companies
     {
         return $this->company;
@@ -225,6 +249,42 @@ class Quotations
     public function setCompanyName(string $company_name): static
     {
         $this->company_name = $company_name;
+
+        return $this;
+    }
+
+    public function getProject(): ?Projects
+    {
+        return $this->project;
+    }
+
+    public function setProject(?Projects $project): static
+    {
+        $this->project = $project;
+
+        return $this;
+    }
+
+    public function getOpportunitiy(): ?Opportunities
+    {
+        return $this->opportunitiy;
+    }
+
+    public function setOpportunitiy(?Opportunities $opportunitiy): static
+    {
+        $this->opportunitiy = $opportunitiy;
+
+        return $this;
+    }
+
+    public function getContract(): ?Contracts
+    {
+        return $this->contract;
+    }
+
+    public function setContract(?Contracts $contract): static
+    {
+        $this->contract = $contract;
 
         return $this;
     }
@@ -439,7 +499,7 @@ class Quotations
         return $this;
     }
 
-   
+    
 
-   
+    
 }

@@ -42,13 +42,15 @@ class Users
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Contracts::class)]
     private Collection $contracts;
 
-    #[ORM\OneToMany(mappedBy: 'users', targetEntity: Quotations::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Quotations::class)]
     private Collection $quotations;
 
+    
     public function __construct()
     {
         $this->contracts = new ArrayCollection();
         $this->quotations = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -183,6 +185,36 @@ class Users
             // set the owning side to null (unless already changed)
             if ($contract->getUser() === $this) {
                 $contract->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Quotations>
+     */
+    public function getQuotations(): Collection
+    {
+        return $this->quotations;
+    }
+
+    public function addQuotation(Quotations $quotation): static
+    {
+        if (!$this->quotations->contains($quotation)) {
+            $this->quotations->add($quotation);
+            $quotation->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuotation(Quotations $quotation): static
+    {
+        if ($this->quotations->removeElement($quotation)) {
+            // set the owning side to null (unless already changed)
+            if ($quotation->getUser() === $this) {
+                $quotation->setUser(null);
             }
         }
 

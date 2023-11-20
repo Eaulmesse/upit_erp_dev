@@ -19,7 +19,7 @@ class Companies
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $creation_date = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -59,10 +59,10 @@ class Companies
     private ?string $intracommunity_number = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $supplier_thidparty_code = null;
+    private ?string $supplier_thidparty_code = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $siret = null;
+    private ?string $siret = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $isB2C = null;
@@ -83,11 +83,14 @@ class Companies
     #[ORM\OneToMany(mappedBy: 'company', targetEntity: Opportunities::class)]
     private Collection $opportunities;
 
-    #[ORM\ManyToMany(targetEntity: Projects::class, mappedBy: 'company')]
-    private Collection $projects;
-
+    
     #[ORM\OneToMany(mappedBy: 'company', targetEntity: Expenses::class)]
     private Collection $expenses;
+
+    #[ORM\OneToMany(mappedBy: 'company', targetEntity: Projects::class)]
+    private Collection $projects;
+
+    
 
     public function __construct()
     {
@@ -96,8 +99,9 @@ class Companies
         // $this->company_name = new ArrayCollection();
         $this->quotations = new ArrayCollection();
         $this->opportunities = new ArrayCollection();
-        $this->projects = new ArrayCollection();
+        
         $this->expenses = new ArrayCollection();
+        $this->projects = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -129,7 +133,7 @@ class Companies
         return $this->creation_date;
     }
 
-    public function setCreationDate(\DateTimeInterface $creation_date): static
+    public function setCreationDate(?\DateTimeInterface $creation_date): static
     {
         $this->creation_date = $creation_date;
 
@@ -141,9 +145,9 @@ class Companies
         return $this->address_street;
     }
 
-    public function setAddressStreet(string $adress_street): static
+    public function setAddressStreet(string $address_street): static
     {
-        $this->address_street = $adress_street;
+        $this->address_street = $address_street;
 
         return $this;
     }
@@ -208,7 +212,7 @@ class Companies
         return $this;
     }
 
-    public function isIsSupplier(): ?bool
+    public function IsSupplier(): ?bool
     {
         return $this->is_supplier;
     }
@@ -256,6 +260,18 @@ class Companies
         return $this;
     }
 
+    public function getLanguage(): ?string
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(string $language): static
+    {
+        $this->language = $language;
+
+        return $this;
+    }
+
     public function getThirdpartyCode(): ?string
     {
         return $this->thirdparty_code;
@@ -280,24 +296,24 @@ class Companies
         return $this;
     }
 
-    public function getSupplierThidpartyCode(): ?int
+    public function getSupplierThidpartyCode(): ?string
     {
         return $this->supplier_thidparty_code;
     }
 
-    public function setSupplierThidpartyCode(?int $supplier_thidparty_code): static
+    public function setSupplierThidpartyCode(?string $supplier_thidparty_code): static
     {
         $this->supplier_thidparty_code = $supplier_thidparty_code;
 
         return $this;
     }
 
-    public function getSiret(): ?int
+    public function getSiret(): ?string
     {
         return $this->siret;
     }
 
-    public function setSiret(int $siret): static
+    public function setSiret(string $siret): static
     {
         $this->siret = $siret;
 
@@ -316,17 +332,7 @@ class Companies
         return $this;
     }
 
-    public function getLanguage(): ?string
-    {
-        return $this->language;
-    }
-
-    public function setLanguage(string $language): static
-    {
-        $this->language = $language;
-
-        return $this;
-    }
+    
 
     /**
      * @return Collection<int, Addresses>
@@ -461,33 +467,6 @@ class Companies
     }
 
     /**
-     * @return Collection<int, Projects>
-     */
-    public function getProjects(): Collection
-    {
-        return $this->projects;
-    }
-
-    public function addProject(Projects $project): static
-    {
-        if (!$this->projects->contains($project)) {
-            $this->projects->add($project);
-            $project->addCompany($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProject(Projects $project): static
-    {
-        if ($this->projects->removeElement($project)) {
-            $project->removeCompany($this);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Expenses>
      */
     public function getExpenses(): Collection
@@ -516,6 +495,38 @@ class Companies
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Projects>
+     */
+    public function getProjects(): Collection
+    {
+        return $this->projects;
+    }
+
+    public function addProject(Projects $project): static
+    {
+        if (!$this->projects->contains($project)) {
+            $this->projects->add($project);
+            $project->setCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProject(Projects $project): static
+    {
+        if ($this->projects->removeElement($project)) {
+            // set the owning side to null (unless already changed)
+            if ($project->getCompany() === $this) {
+                $project->setCompany(null);
+            }
+        }
+
+        return $this;
+    }
+
+    
 
 
 }

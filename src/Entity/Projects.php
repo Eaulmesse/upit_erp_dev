@@ -22,9 +22,6 @@ class Projects
     #[ORM\Column(length: 255)]
     private ?string $number = null;
 
-    #[ORM\ManyToMany(targetEntity: Companies::class, inversedBy: 'projects')]
-    private Collection $company;
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $comments = null;
 
@@ -64,34 +61,47 @@ class Projects
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $actual_end = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $project_nature = null;
-
     #[ORM\ManyToMany(targetEntity: Workforces::class, inversedBy: 'projects')]
     private Collection $workforces;
 
-    #[ORM\Column]
-    private ?int $statuses_id = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $statuses_name = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $statuses_date = null;
+    
 
     #[ORM\OneToMany(mappedBy: 'project', targetEntity: Expenses::class)]
     private Collection $expenses;
 
+    
+
+    #[ORM\OneToMany(mappedBy: 'project', targetEntity: Quotations::class)]
+    private Collection $quotations;
+
+    
+    #[ORM\ManyToOne(inversedBy: 'projects')]
+    private ?ProjectNatures $projectNatures = null;
+
+    #[ORM\ManyToOne(inversedBy: 'projects')]
+    private ?Companies $company = null;
+
+    #[ORM\ManyToOne(inversedBy: 'projects')]
+    private ?Statuses $statuses = null;
+
     public function __construct()
     {
-        $this->company = new ArrayCollection();
+        
         $this->workforces = new ArrayCollection();
         $this->expenses = new ArrayCollection();
+        $this->quotations = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(string $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getName(): ?string
@@ -118,26 +128,14 @@ class Projects
         return $this;
     }
 
-    /**
-     * @return Collection<int, Companies>
-     */
-    public function getCompany(): Collection
+    public function getCompany(): ?Companies
     {
         return $this->company;
     }
 
-    public function addCompany(Companies $company): static
+    public function setCompany(?Companies $company): static
     {
-        if (!$this->company->contains($company)) {
-            $this->company->add($company);
-        }
-
-        return $this;
-    }
-
-    public function removeCompany(Companies $company): static
-    {
-        $this->company->removeElement($company);
+        $this->company = $company;
 
         return $this;
     }
@@ -298,14 +296,14 @@ class Projects
         return $this;
     }
 
-    public function getProjectNature(): ?string
+    public function getProjectNatures(): ?ProjectNatures
     {
-        return $this->project_nature;
+        return $this->projectNatures;
     }
 
-    public function setProjectNature(?string $project_nature): static
+    public function setProjectNatures(?ProjectNatures $projectNatures): static
     {
-        $this->project_nature = $project_nature;
+        $this->projectNatures = $projectNatures;
 
         return $this;
     }
@@ -334,41 +332,6 @@ class Projects
         return $this;
     }
 
-    public function getStatusesId(): ?int
-    {
-        return $this->statuses_id;
-    }
-
-    public function setStatusesId(int $statuses_id): static
-    {
-        $this->statuses_id = $statuses_id;
-
-        return $this;
-    }
-
-    public function getStatusesName(): ?string
-    {
-        return $this->statuses_name;
-    }
-
-    public function setStatusesName(string $statuses_name): static
-    {
-        $this->statuses_name = $statuses_name;
-
-        return $this;
-    }
-
-    public function getStatusesDate(): ?\DateTimeInterface
-    {
-        return $this->statuses_date;
-    }
-
-    public function setStatusesDate(\DateTimeInterface $statuses_date): static
-    {
-        $this->statuses_date = $statuses_date;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Expenses>
@@ -396,6 +359,52 @@ class Projects
                 $expense->setProject(null);
             }
         }
+
+        return $this;
+    }
+
+    
+
+    
+
+    /**
+     * @return Collection<int, Quotations>
+     */
+    public function getQuotations(): Collection
+    {
+        return $this->quotations;
+    }
+
+    public function addQuotation(Quotations $quotation): static
+    {
+        if (!$this->quotations->contains($quotation)) {
+            $this->quotations->add($quotation);
+            $quotation->setProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuotation(Quotations $quotation): static
+    {
+        if ($this->quotations->removeElement($quotation)) {
+            // set the owning side to null (unless already changed)
+            if ($quotation->getProject() === $this) {
+                $quotation->setProject(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getStatuses(): ?Statuses
+    {
+        return $this->statuses;
+    }
+
+    public function setStatuses(?Statuses $statuses): static
+    {
+        $this->statuses = $statuses;
 
         return $this;
     }
