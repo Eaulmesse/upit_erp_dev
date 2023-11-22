@@ -63,6 +63,46 @@ app_api_get:
     path: '/api/get/{object}'
     controller: 'App\Controller\ApiController::processApiRequest'
 
+# CALL API ROUTE
+app_call_companies_api:
+    path: '/call/api/companies'
+    controller: 'App\Controller\CallApiController::callCompaniesService'
+
+app_call_addresses_api:
+    path: '/call/api/addresses'
+    controller: 'App\Controller\CallApiController::callAddressesService'
+
+app_call_users_api:
+    path: '/call/api/users'
+    controller: 'App\Controller\CallApiController::callUsersService'
+
+app_call_workforces_api:
+    path: '/call/api/workforces'
+    controller: 'App\Controller\CallApiController::callWorkforcesService'
+
+app_call_payslips_api:
+    path: '/call/api/payslips'
+    controller: 'App\Controller\CallApiController::callPayslipsService'
+
+app_call_employees_api:
+    path: '/call/api/employees'
+    controller: 'App\Controller\CallApiController::callEmployeesService'
+
+app_call_products_api:
+    path: '/call/api/products'
+    controller: 'App\Controller\CallApiController::callProductsService'
+
+app_call_suppliers_api:
+    path: '/call/api/suppliers'
+    controller: 'App\Controller\CallApiController::callSuppliersService'
+
+app_call_contracts_api:
+    path: '/call/api/contracts'
+    controller: 'App\Controller\CallApiController::callContractsService'
+
+
+
+
 
 
 

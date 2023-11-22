@@ -55,7 +55,7 @@ class Products
     private ?bool $disabled = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $internal_id = null;
+    private ?string $internal_id = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $stock = null;
@@ -247,12 +247,12 @@ class Products
         return $this;
     }
 
-    public function getInternalId(): ?int
+    public function getInternalId(): ?string
     {
         return $this->internal_id;
     }
 
-    public function setInternalId(?int $internal_id): static
+    public function setInternalId(?string $internal_id): static
     {
         $this->internal_id = $internal_id;
 
