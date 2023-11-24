@@ -52,32 +52,8 @@ class Opportunities
     #[ORM\ManyToOne(inversedBy: 'opportunities')]
     private ?Companies $company = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $company_name = null;
-
-    #[ORM\Column]
-    private ?bool $company_is_supplier = null;
-
-    #[ORM\Column]
-    private ?bool $company_is_prospect = null;
-
-    #[ORM\Column]
-    private ?bool $company_is_customer = null;
-
     #[ORM\ManyToOne(inversedBy: 'opportunities')]
     private ?Employees $employees = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $employee_name = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $employee_email = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $employee_cellphone_number = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $employee_phone_number = null;
 
     #[ORM\OneToMany(mappedBy: 'opportunitiy', targetEntity: Quotations::class)]
     private Collection $quotations;
@@ -90,6 +66,13 @@ class Opportunities
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(string $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getName(): ?string
@@ -236,54 +219,6 @@ class Opportunities
         return $this;
     }
 
-    public function getCompanyName(): ?string
-    {
-        return $this->company_name;
-    }
-
-    public function setCompanyName(string $company_name): static
-    {
-        $this->company_name = $company_name;
-
-        return $this;
-    }
-
-    public function isCompanyIsSupplier(): ?bool
-    {
-        return $this->company_is_supplier;
-    }
-
-    public function setCompanyIsSupplier(bool $company_is_supplier): static
-    {
-        $this->company_is_supplier = $company_is_supplier;
-
-        return $this;
-    }
-
-    public function isCompanyIsProspect(): ?bool
-    {
-        return $this->company_is_prospect;
-    }
-
-    public function setCompanyIsProspect(bool $company_is_prospect): static
-    {
-        $this->company_is_prospect = $company_is_prospect;
-
-        return $this;
-    }
-
-    public function isCompanyIsCustomer(): ?bool
-    {
-        return $this->company_is_customer;
-    }
-
-    public function setCompanyIsCustomer(bool $company_is_customer): static
-    {
-        $this->company_is_customer = $company_is_customer;
-
-        return $this;
-    }
-
     public function getEmployees(): ?Employees
     {
         return $this->employees;
@@ -292,54 +227,6 @@ class Opportunities
     public function setEmployees(?Employees $employees): static
     {
         $this->employees = $employees;
-
-        return $this;
-    }
-
-    public function getEmployeeName(): ?string
-    {
-        return $this->employee_name;
-    }
-
-    public function setEmployeeName(string $employee_name): static
-    {
-        $this->employee_name = $employee_name;
-
-        return $this;
-    }
-
-    public function getEmployeeEmail(): ?string
-    {
-        return $this->employee_email;
-    }
-
-    public function setEmployeeEmail(string $employee_email): static
-    {
-        $this->employee_email = $employee_email;
-
-        return $this;
-    }
-
-    public function getEmployeeCellphoneNumber(): ?string
-    {
-        return $this->employee_cellphone_number;
-    }
-
-    public function setEmployeeCellphoneNumber(string $employee_cellphone_number): static
-    {
-        $this->employee_cellphone_number = $employee_cellphone_number;
-
-        return $this;
-    }
-
-    public function getEmployeePhoneNumber(): ?string
-    {
-        return $this->employee_phone_number;
-    }
-
-    public function setEmployeePhoneNumber(string $employee_phone_number): static
-    {
-        $this->employee_phone_number = $employee_phone_number;
 
         return $this;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Repository\EmployeesRepository;
 use Psr\Log\LoggerInterface;
 use App\Repository\UsersRepository;
 use App\Repository\AddressesRepository;
@@ -26,7 +27,7 @@ class OpportunitiesApiService // Remplacement de ContractsApiService par Opportu
         $this->logger = $logger;
     }
 
-    public function callAPI(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, OpportunitiesRepository $opportunitiesRepository, CompaniesRepository $companyRepository, AddressesRepository $addressesRepository, UsersRepository $usersRepository, QuotationsRepository $quotationsRepository): Response
+    public function callAPI(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, OpportunitiesRepository $opportunitiesRepository, CompaniesRepository $companyRepository, EmployeesRepository $employeesRepository): Response
     {
         $response = $this->client->request(
             'GET',
@@ -41,17 +42,19 @@ class OpportunitiesApiService // Remplacement de ContractsApiService par Opportu
         $data = $response->toArray();
         $session->set('api_data', $data);
 
-        $this->dataCheck($session, $em, $logger, $usersRepository, $opportunitiesRepository, $addressesRepository, $companyRepository, $quotationsRepository);
+        $this->dataCheck($session, $em, $logger, $opportunitiesRepository, $companyRepository, $employeesRepository );
 
         return new Response('Received!', Response::HTTP_OK);
     }
 
-    public function dataCheck(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, UsersRepository $usersRepository, OpportunitiesRepository $opportunitiesRepository, AddressesRepository $addressesRepository, CompaniesRepository $companyRepository, QuotationsRepository $quotationsRepository): Response
+    public function dataCheck(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, OpportunitiesRepository $opportunitiesRepository, CompaniesRepository $companyRepository, EmployeesRepository $employeesRepository): Response
     {
         $data = $session->get('api_data');
 
         foreach ($data as $opportunitiesData) {
-            $this->opportunitiesToDatabase($opportunitiesData, $em, $usersRepository, $companyRepository, $addressesRepository, $quotationsRepository);
+            $this->opportunitiesToDatabase($opportunitiesData, $em, $companyRepository, $employeesRepository);
+//            dd($this->opportunitiesToDatabase($opportunitiesData, $em, $companyRepository, $employeesRepository));
+            $em->persist($this->opportunitiesToDatabase($opportunitiesData, $em, $companyRepository, $employeesRepository));
         }
 
         // Suppression des entités qui ne sont plus présentes dans les nouvelles données
@@ -71,7 +74,7 @@ class OpportunitiesApiService // Remplacement de ContractsApiService par Opportu
         return new Response('Received!', Response::HTTP_OK);
     }
 
-    private function opportunitiesToDatabase($opportunitiesData, EntityManagerInterface $em, UsersRepository $usersRepository, CompaniesRepository $companyRepository, AddressesRepository $addressesRepository, QuotationsRepository $quotationsRepository,  ?Opportunities $opportunities = null): Opportunities
+    private function opportunitiesToDatabase($opportunitiesData, EntityManagerInterface $em, CompaniesRepository $companyRepository, EmployeesRepository $employeesRepository,  ?Opportunities $opportunities = null): Opportunities
     {
         $opportunitiesId = $opportunitiesData['id'];
         $opportunities = $em->getRepository(Opportunities::class)->find($opportunitiesId);
@@ -81,7 +84,33 @@ class OpportunitiesApiService // Remplacement de ContractsApiService par Opportu
             $opportunities->setId($opportunitiesId);
         }
 
+        $opportunities->setId($opportunitiesData['id']);
+        $opportunities->setName($opportunitiesData['name']);
+        $opportunities->setComments($opportunitiesData['comments']);
+        $opportunities->setAmount($opportunitiesData['amount']);
+        $opportunities->setProbability($opportunitiesData['probability']);
 
+        $dueDate = new \DateTime($opportunitiesData['due_date']);
+        $opportunities->setDueDate($dueDate);
+
+        $endDate = new \DateTime($opportunitiesData['end_date']);
+        $opportunities->setEndDate($endDate);
+
+        $opportunities->setIsWin($opportunitiesData['is_win']);
+        $opportunities->setIsArchived($opportunitiesData['is_archived']);
+        $opportunities->setUserName($opportunitiesData['user_name']);
+        $opportunities->setPipName($opportunitiesData['pipe_name']);
+        $opportunities->setPipStepName($opportunitiesData['pipe_step_name']);
+        $opportunities->setCompany($companyRepository->find($opportunitiesData['company']['id']));
+
+
+        foreach ($opportunitiesData['employees'] as $employees)  {
+            if($employees['id'] != null) {
+                $opportunities->setEmployees($employeesRepository->find($employees['id']));
+            } else {
+                $opportunities->setEmployees(null);
+            }
+        }
 
         return $opportunities;
     }

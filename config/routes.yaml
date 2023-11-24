@@ -100,6 +100,11 @@ app_call_contracts_api:
     path: '/call/api/contracts'
     controller: 'App\Controller\CallApiController::callContractsService'
 
+app_call_opportunities_api:
+    path: '/call/api/opportunities'
+    controller: 'App\Controller\CallApiController::callOpportunitiesService'
+
+
 
 
 

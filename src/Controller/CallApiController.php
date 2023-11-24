@@ -30,6 +30,9 @@ use App\Repository\ContractsRepository;
 use App\Repository\EmployeesRepository;
 use App\Repository\SuppliersRepository;
 
+use App\Repository\OpportunitiesRepository;
+use App\Service\OpportunitiesApiService;
+
 
 
 use App\Repository\QuotationsRepository;
@@ -71,40 +74,36 @@ class CallApiController extends AbstractController
     #[Route('/call/api/payslips', name: 'app_call_payslips_api')]
     public function callPayslipsService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, PayslipsApiService $payslipsApiService, PayslipsRepository $payslipsRepository, WorkforcesRepository $workforcesRepository): Response
     {
-        $data = $payslipsApiService->callAPI($session, $em, $logger, $payslipsRepository, $workforcesRepository);
-
-        return $data;
+        return $payslipsApiService->callAPI($session, $em, $logger, $payslipsRepository, $workforcesRepository);
     }
 
     #[Route('/call/api/employees', name: 'app_call_employees_api')]
     public function callEmployeesService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, EmployeesApiService $employeesApiService, EmployeesRepository $employeesRepository, CompaniesRepository $companiesRepository): Response
     {
-        $data = $employeesApiService->callAPI($session, $em, $logger, $employeesRepository, $companiesRepository);
-
-        return $data;
+        return $employeesApiService->callAPI($session, $em, $logger, $employeesRepository, $companiesRepository);
     }
 
     #[Route('/call/api/products', name: 'app_call_products_api')]
     public function callProductsService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, ProductsApiService $productsApiService, ProductsRepository $productsRepository): Response
     {
-        $data = $productsApiService->callAPI($session, $em, $logger, $productsRepository);
-
-        return $data;
+        return $productsApiService->callAPI($session, $em, $logger, $productsRepository);
     }
 
     #[Route('/call/api/suppliers', name: 'app_call_suppliers_api')]
     public function callSuppliersService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, SuppliersApiService $suppliersApiService, SuppliersRepository $suppliersRepository, CompaniesRepository $companiesRepository): Response
     {
-        $data = $suppliersApiService->callAPI($session, $em, $logger, $suppliersRepository, $companiesRepository);
-
-        return $data;
+        return $suppliersApiService->callAPI($session, $em, $logger, $suppliersRepository, $companiesRepository);
     }
 
     #[Route('/call/api/contracts', name: 'app_call_contracts_api')]
     public function callContractsService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, ContractsApiService $contractsApiService, ContractsRepository $contractsRepository, CompaniesRepository $companiesRepository,  AddressesRepository $addressesRepository, UsersRepository $usersRepository, QuotationsRepository $quotationsRepository): Response
     {
-        $data = $contractsApiService->callAPI($session, $em, $logger, $contractsRepository, $companiesRepository, $addressesRepository, $usersRepository, $quotationsRepository);
+        return $contractsApiService->callAPI($session, $em, $logger, $contractsRepository, $companiesRepository, $addressesRepository, $usersRepository, $quotationsRepository);
+    }
 
-        return $data;
+    #[Route('/call/api/opportunities', name: 'app_call_opportunities_api')]
+    public function callOpportunitiesService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, OpportunitiesRepository $opportunitiesRepository, CompaniesRepository $companyRepository, EmployeesRepository $employeesRepository, OpportunitiesApiService $opportunitiesApiService): Response
+    {
+        return $opportunitiesApiService->callAPI($session, $em, $logger, $opportunitiesRepository, $companyRepository, $employeesRepository);
     }
 }
