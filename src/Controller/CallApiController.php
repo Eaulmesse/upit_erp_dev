@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Addresses;
+use App\Repository\ProjectNaturesRepository;
 use Psr\Log\LoggerInterface;
 use App\Service\UsersApiService;
 
@@ -33,6 +34,10 @@ use App\Repository\SuppliersRepository;
 use App\Repository\OpportunitiesRepository;
 use App\Service\OpportunitiesApiService;
 
+use App\Repository\ProjectsRepository;
+use App\Repository\StatusesRepository;
+use App\Service\ProjectsApiService;
+
 
 
 use App\Repository\QuotationsRepository;
@@ -50,13 +55,13 @@ class CallApiController extends AbstractController
     #[Route('/call/api/companies', name: 'app_call_companies_api')]
     public function callCompaniesService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, CompaniesRepository $companiesRepository, CompaniesApiService $companiesApiService)
     {
-        $data = $companiesApiService->callAPI($session, $em, $logger, $companiesRepository);
+        return($companiesApiService->callAPI($session, $em, $logger, $companiesRepository));
     }
 
     #[Route('/call/api/addresses', name: 'app_call_addresses_api')]
     public function callAddressesService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, AddressesRepository $addressesRepository, AddressesApiService $addressesApiService, CompaniesRepository $companiesRepository)
     {
-        $data = $addressesApiService->callAPI($session, $em, $logger, $addressesRepository, $companiesRepository);
+        return($addressesApiService->callAPI($session, $em, $logger, $addressesRepository, $companiesRepository));
     }
 
     #[Route('/call/api/users', name: 'app_call_users_api')]
@@ -105,5 +110,11 @@ class CallApiController extends AbstractController
     public function callOpportunitiesService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, OpportunitiesRepository $opportunitiesRepository, CompaniesRepository $companyRepository, EmployeesRepository $employeesRepository, OpportunitiesApiService $opportunitiesApiService): Response
     {
         return $opportunitiesApiService->callAPI($session, $em, $logger, $opportunitiesRepository, $companyRepository, $employeesRepository);
+    }
+
+    #[Route('/call/api/projects', name: 'app_call_projectssprojects_api')]
+    public function callProjectsService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, ProjectsRepository $projectsRepository, CompaniesRepository $companyRepository, StatusesRepository $statusesRepository, ProjectNaturesRepository $projectNaturesRepository, ProjectsApiService $projectsApiService, UsersRepository $usersRepository): Response
+    {
+        return $projectsApiService->callAPI($session, $em, $logger, $projectsRepository, $companyRepository, $statusesRepository, $projectNaturesRepository, $usersRepository);
     }
 }

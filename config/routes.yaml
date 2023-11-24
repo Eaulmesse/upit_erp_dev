@@ -104,6 +104,10 @@ app_call_opportunities_api:
     path: '/call/api/opportunities'
     controller: 'App\Controller\CallApiController::callOpportunitiesService'
 
+app_call_projects_api:
+    path: '/call/api/projects'
+    controller: 'App\Controller\CallApiController::callProjectsService'
+
 
 
 
