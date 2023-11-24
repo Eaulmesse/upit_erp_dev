@@ -114,17 +114,12 @@ class ContractsApiService // Remplacement de SuppliersApiService par ContractsAp
         } else {
             $lastUpdateDate = null;
             $contracts->setLastUpdateDate($lastUpdateDate);
-        }  
+        }
 
-        
         $invoiceAddresse = $addressesRepository->findOneBy([
             'company' => $contractsData["company"]["id"],
             'is_for_invoice' => 'true'
         ]);
-
-        
-        
-        
 
         if($invoiceAddresse !== null)
         {

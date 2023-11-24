@@ -59,17 +59,13 @@ class CallApiController extends AbstractController
     #[Route('/call/api/users', name: 'app_call_users_api')]
     public function callUsersService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, UsersApiService $usersApiService, UsersRepository $usersRepository): Response
     {
-        $data = $usersApiService->callAPI($session, $em, $logger, $usersRepository);
-
-        return $data;
+        return $usersApiService->callAPI($session, $em, $logger, $usersRepository);
     }
 
     #[Route('/call/api/workforces', name: 'app_call_workforces_api')]
     public function callWorkforcesService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, WorkforcesApiService $workforcesApiService, WorkforcesRepository $workforcesRepository): Response
     {
-        $data = $workforcesApiService->callAPI($session, $em, $logger, $workforcesRepository);
-
-        return $data;
+        return $workforcesApiService->callAPI($session, $em, $logger, $workforcesRepository);
     }
 
     #[Route('/call/api/payslips', name: 'app_call_payslips_api')]
