@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/upit-dev.iml" filepath="$PROJECT_DIR$/.idea/upit-dev.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/upit_erp_dev.iml" filepath="$PROJECT_DIR$/.idea/upit_erp_dev.iml" />
+>>>>>>> a01a5f6b512bc3a2b02dbf5f1c289d8e907a2841
     </modules>
   </component>
 </project>
