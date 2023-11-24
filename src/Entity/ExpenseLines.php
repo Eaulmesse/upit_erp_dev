@@ -13,13 +13,13 @@ class ExpenseLines
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $quantity = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?float $total_pre_tax_amount = null;
 
     #[ORM\Column(length: 255, nullable: true)]

@@ -16,10 +16,10 @@ class ApiController extends AbstractController
     #[Route('/api/get/{object}', name: 'app_api_get')]
     public function processApiRequest(ApiService $apiService, EntityManagerInterface $em, string $object): Response
     {
-        $className = str_replace('-', ' ', $object); // Retire le tiret
-        $className= ucwords($className); // Met en majuscules les premières lettres des mots
-        $className = str_replace(' ', '', $className); // Retire les espaces
-        $className = ucfirst($className); // Met la première lettre en majuscule
+        $className = str_replace('-', ' ', $object);
+        $className= ucwords($className); 
+        $className = str_replace(' ', '', $className); 
+        $className = ucfirst($className); 
 
         $repository = $em->getRepository(trim('App\Entity\ ') . ucfirst($className));
         

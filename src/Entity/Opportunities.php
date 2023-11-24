@@ -50,7 +50,7 @@ class Opportunities
     private ?string $pip_step_name = null;
 
     #[ORM\ManyToOne(inversedBy: 'opportunities')]
-    private ?companies $company = null;
+    private ?Companies $company = null;
 
     #[ORM\Column(length: 255)]
     private ?string $company_name = null;
@@ -65,7 +65,7 @@ class Opportunities
     private ?bool $company_is_customer = null;
 
     #[ORM\ManyToOne(inversedBy: 'opportunities')]
-    private ?employees $employees = null;
+    private ?Employees $employees = null;
 
     #[ORM\Column(length: 255)]
     private ?string $employee_name = null;
@@ -224,12 +224,12 @@ class Opportunities
         return $this;
     }
 
-    public function getCompany(): ?companies
+    public function getCompany(): ?Companies
     {
         return $this->company;
     }
 
-    public function setCompany(?companies $company): static
+    public function setCompany(?Companies $company): static
     {
         $this->company = $company;
 
@@ -284,12 +284,12 @@ class Opportunities
         return $this;
     }
 
-    public function getEmployees(): ?employees
+    public function getEmployees(): ?Employees
     {
         return $this->employees;
     }
 
-    public function setEmployees(?employees $employees): static
+    public function setEmployees(?Employees $employees): static
     {
         $this->employees = $employees;
 

@@ -92,7 +92,7 @@ class Employees
         return $this->lastname;
     }
 
-    public function setLastname(string $lastname): static
+    public function setLastname(?string $lastname): static
     {
         $this->lastname = $lastname;
 
@@ -104,7 +104,7 @@ class Employees
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
 
@@ -128,7 +128,7 @@ class Employees
         return $this->cellphone_number;
     }
 
-    public function setCellphoneNumber(string $cellphone_number): static
+    public function setCellphoneNumber(?string $cellphone_number): static
     {
         $this->cellphone_number = $cellphone_number;
 
