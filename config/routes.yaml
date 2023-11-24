@@ -108,6 +108,16 @@ app_call_projects_api:
     path: '/call/api/projects'
     controller: 'App\Controller\CallApiController::callProjectsService'
 
+app_call_taxRates_api:
+    path: '/call/api/taxRates'
+    controller: 'App\Controller\CallApiController::callTaxRatesService'
+
+app_call_supplierContracts_api:
+    path: '/call/api/supplierContracts'
+    controller: 'App\Controller\CallApiController::callSupplierContractsService'
+
+
+
 
 
 

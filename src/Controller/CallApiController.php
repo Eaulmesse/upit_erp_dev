@@ -4,6 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Addresses;
 use App\Repository\ProjectNaturesRepository;
+use App\Repository\SupplierContractRepository;
+use App\Repository\TaxRatesRepository;
+use App\Service\SupplierContractsApiService;
+use App\Service\TaxRatesApiService;
 use Psr\Log\LoggerInterface;
 use App\Service\UsersApiService;
 
@@ -112,9 +116,21 @@ class CallApiController extends AbstractController
         return $opportunitiesApiService->callAPI($session, $em, $logger, $opportunitiesRepository, $companyRepository, $employeesRepository);
     }
 
-    #[Route('/call/api/projects', name: 'app_call_projectssprojects_api')]
+    #[Route('/call/api/projects', name: 'app_call_projects_api')]
     public function callProjectsService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, ProjectsRepository $projectsRepository, CompaniesRepository $companyRepository, StatusesRepository $statusesRepository, ProjectNaturesRepository $projectNaturesRepository, ProjectsApiService $projectsApiService, UsersRepository $usersRepository): Response
     {
         return $projectsApiService->callAPI($session, $em, $logger, $projectsRepository, $companyRepository, $statusesRepository, $projectNaturesRepository, $usersRepository);
+    }
+
+    #[Route('/call/api/taxRates', name: 'app_call_taxRates_api')]
+    public function callTaxRatesService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, TaxRatesRepository $taxRatesRepository, TaxRatesApiService $taxRatesApiService): Response
+    {
+        return $taxRatesApiService->callAPI($session, $em, $logger, $taxRatesRepository);
+    }
+
+    #[Route('/call/api/supplierContracts', name: 'app_call_supplierContracts_api')]
+    public function callSupplierContractsService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger,  SupplierContractRepository $supplierContractRepository, SuppliersRepository $suppliersRepository, SupplierContractsApiService $supplierContractsApiService): Response
+    {
+        return $supplierContractsApiService->callAPI($session, $em, $logger, $supplierContractRepository, $suppliersRepository);
     }
 }
