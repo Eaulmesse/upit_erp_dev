@@ -116,6 +116,11 @@ app_call_supplierContracts_api:
     path: '/call/api/supplierContracts'
     controller: 'App\Controller\CallApiController::callSupplierContractsService'
 
+app_call_expenses:
+    path: '/call/api/expenses'
+    controller: 'App\Controller\CallApiController::callExpensesApiService'
+
+
 
 
 

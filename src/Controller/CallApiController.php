@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Addresses;
+use App\Repository\ExpensesRepository;
 use App\Repository\ProjectNaturesRepository;
 use App\Repository\SupplierContractRepository;
 use App\Repository\TaxRatesRepository;
@@ -41,6 +42,8 @@ use App\Service\OpportunitiesApiService;
 use App\Repository\ProjectsRepository;
 use App\Repository\StatusesRepository;
 use App\Service\ProjectsApiService;
+
+use App\Service\ExpensesApiService;
 
 
 
@@ -132,5 +135,11 @@ class CallApiController extends AbstractController
     public function callSupplierContractsService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger,  SupplierContractRepository $supplierContractRepository, SuppliersRepository $suppliersRepository, SupplierContractsApiService $supplierContractsApiService): Response
     {
         return $supplierContractsApiService->callAPI($session, $em, $logger, $supplierContractRepository, $suppliersRepository);
+    }
+
+    #[Route('/call/api/expenses', name: 'app_call_expenses_api')]
+    public function callExpensesApiService(SessionInterface $session, EntityManagerInterface $em,  ExpensesRepository $expensesRepository, SuppliersRepository $suppliersRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectsRepository $projectsRepository, SupplierContractRepository $supplierContractRepository, ExpensesApiService $expensesApiService): Response
+    {
+        return $expensesApiService->callAPI($session, $em, $expensesRepository, $suppliersRepository, $companiesRepository, $workforcesRepository, $payslipsRepository, $projectsRepository, $supplierContractRepository);
     }
 }
