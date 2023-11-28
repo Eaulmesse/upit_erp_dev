@@ -124,6 +124,10 @@ app_call_invoices:
     path: '/call/api/invoices'
     controller: 'App\Controller\CallApiController::callInvoicesApiService'
 
+app_call_quotations:
+    path: '/call/api/quotations'
+    controller: 'App\Controller\CallApiController::callQuotationsApiService'
+
 
 
 

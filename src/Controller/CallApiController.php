@@ -52,6 +52,7 @@ use App\Repository\OpportunitiesRepository;
 use App\Repository\ProjectNaturesRepository;
 use App\Service\SupplierContractsApiService;
 use App\Repository\SupplierContractRepository;
+use App\Service\QuotationsApiService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -149,5 +150,11 @@ class CallApiController extends AbstractController
     public function callInvoicesApiService(SessionInterface $session, EntityManagerInterface $em, InvoicesRepository $invoicesRepository, InvoicesApiService $invoicesApiService, ContractsRepository $contractsRepository): Response
     {
         return $invoicesApiService->callAPI($session, $em, $invoicesRepository, $contractsRepository);
+    }
+
+    #[Route('/call/api/quotations', name: 'app_call_quotations_api')]
+    public function callQuotationsApiService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger,UsersRepository $usersRepository, CompaniesRepository $companiesRepository, ProjectsRepository $projectsRepository, OpportunitiesRepository $opportunitiesRepository, ContractsRepository $contractsRepository, QuotationsRepository $quotationsRepository, QuotationsApiService $quotationsApiService): Response
+    {
+        return $quotationsApiService->callAPI($session, $em, $logger, $usersRepository, $companiesRepository, $projectsRepository, $opportunitiesRepository, $contractsRepository, $quotationsRepository);
     }
 }

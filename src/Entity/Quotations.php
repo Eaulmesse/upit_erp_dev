@@ -42,7 +42,7 @@ class Quotations
     #[ORM\ManyToOne(inversedBy: 'quotations')]
     private ?Companies $company = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $company_name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -246,7 +246,7 @@ class Quotations
         return $this->company_name;
     }
 
-    public function setCompanyName(string $company_name): static
+    public function setCompanyName(?string $company_name): static
     {
         $this->company_name = $company_name;
 
