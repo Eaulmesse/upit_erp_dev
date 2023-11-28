@@ -128,6 +128,11 @@ app_call_quotations:
     path: '/call/api/quotations'
     controller: 'App\Controller\CallApiController::callQuotationsApiService'
 
+app_call_projectNatures:
+    path: '/call/api/projectNatures'
+    controller: 'App\Controller\CallApiController::callProjectNaturesApiService'
+
+
 
 
 

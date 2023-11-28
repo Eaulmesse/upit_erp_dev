@@ -48,6 +48,7 @@ use App\Repository\WorkforcesRepository;
 use App\Service\OpportunitiesApiService;
 use Doctrine\ORM\EntityManagerInterface;
 
+use App\Service\ProjectNaturesApiService;
 use App\Service\QuotationLinesApiService;
 use App\Repository\ExpenseLinesRepository;
 use App\Repository\OpportunitiesRepository;
@@ -158,5 +159,11 @@ class CallApiController extends AbstractController
     public function callQuotationsApiService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger,UsersRepository $usersRepository, CompaniesRepository $companiesRepository, ProjectsRepository $projectsRepository, OpportunitiesRepository $opportunitiesRepository, ContractsRepository $contractsRepository, QuotationsRepository $quotationsRepository, QuotationsApiService $quotationsApiService, QuotationLinesRepository $quotationLinesRepository,  QuotationLinesApiService $quotationLinesApiService, ProductsRepository $productsRepository): Response
     {
         return $quotationsApiService->callAPI($session, $em, $logger, $usersRepository, $companiesRepository, $projectsRepository, $opportunitiesRepository, $contractsRepository, $quotationsRepository, $quotationLinesRepository, $quotationLinesApiService, $productsRepository);
+    }
+
+    #[Route('/call/api/projectNatures', name: 'app_call_projectNatures_api')]
+    public function callProjectNaturesApiService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, ProjectNaturesApiService $projectNaturesApiService): Response
+    {
+        return $projectNaturesApiService->callAPI($session, $em, $logger);
     }
 }
