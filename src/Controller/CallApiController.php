@@ -6,18 +6,21 @@ use Psr\Log\LoggerInterface;
 use App\Service\UsersApiService;
 use App\Repository\UsersRepository;
 use App\Service\ExpensesApiService;
+use App\Service\InvoicesApiService;
 use App\Service\PayslipsApiService;
 use App\Service\ProductsApiService;
+
 use App\Service\ProjectsApiService;
-
 use App\Service\TaxRatesApiService;
+
 use App\Service\AddressesApiService;
-
 use App\Service\CompaniesApiService;
-use App\Service\ContractsApiService;
 
+use App\Service\ContractsApiService;
 use App\Service\EmployeesApiService;
+
 use App\Service\SuppliersApiService;
+use App\Service\QuotationsApiService;
 
 use App\Service\WorkforcesApiService;
 use App\Repository\ExpensesRepository;
@@ -35,6 +38,7 @@ use App\Repository\CompaniesRepository;
 use App\Repository\ContractsRepository;
 
 use App\Repository\EmployeesRepository;
+use App\Repository\InvoicesRepository; 
 use App\Repository\SuppliersRepository;
 
 use App\Service\ExpenseLinesApiService;
@@ -43,16 +47,14 @@ use App\Repository\WorkforcesRepository;
 
 use App\Service\OpportunitiesApiService;
 use Doctrine\ORM\EntityManagerInterface;
+
+use App\Service\QuotationLinesApiService;
 use App\Repository\ExpenseLinesRepository;
-
-use App\Service\InvoicesApiService;
-use App\Repository\InvoicesRepository; 
-
 use App\Repository\OpportunitiesRepository;
 use App\Repository\ProjectNaturesRepository;
+use App\Repository\QuotationLinesRepository;
 use App\Service\SupplierContractsApiService;
 use App\Repository\SupplierContractRepository;
-use App\Service\QuotationsApiService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -153,8 +155,8 @@ class CallApiController extends AbstractController
     }
 
     #[Route('/call/api/quotations', name: 'app_call_quotations_api')]
-    public function callQuotationsApiService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger,UsersRepository $usersRepository, CompaniesRepository $companiesRepository, ProjectsRepository $projectsRepository, OpportunitiesRepository $opportunitiesRepository, ContractsRepository $contractsRepository, QuotationsRepository $quotationsRepository, QuotationsApiService $quotationsApiService): Response
+    public function callQuotationsApiService(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger,UsersRepository $usersRepository, CompaniesRepository $companiesRepository, ProjectsRepository $projectsRepository, OpportunitiesRepository $opportunitiesRepository, ContractsRepository $contractsRepository, QuotationsRepository $quotationsRepository, QuotationsApiService $quotationsApiService, QuotationLinesRepository $quotationLinesRepository,  QuotationLinesApiService $quotationLinesApiService, ProductsRepository $productsRepository): Response
     {
-        return $quotationsApiService->callAPI($session, $em, $logger, $usersRepository, $companiesRepository, $projectsRepository, $opportunitiesRepository, $contractsRepository, $quotationsRepository);
+        return $quotationsApiService->callAPI($session, $em, $logger, $usersRepository, $companiesRepository, $projectsRepository, $opportunitiesRepository, $contractsRepository, $quotationsRepository, $quotationLinesRepository, $quotationLinesApiService, $productsRepository);
     }
 }

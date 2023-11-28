@@ -2,18 +2,21 @@
 
 namespace App\Service;
 
+use App\Entity\Quotations;
+use Psr\Log\LoggerInterface;
+use App\Repository\UsersRepository;
+use App\Repository\ProductsRepository;
+use App\Repository\ProjectsRepository;
 use App\Repository\CompaniesRepository;
 use App\Repository\ContractsRepository;
-use App\Repository\OpportunitiesRepository;
-use App\Repository\ProjectsRepository;
-use App\Repository\UsersRepository;
-use App\Entity\Quotations;
 use App\Repository\QuotationsRepository;
-use Psr\Log\LoggerInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Service\QuotationLinesApiService;
+use App\Repository\OpportunitiesRepository;
+use App\Repository\QuotationLinesRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Doctrine\ORM\EntityManagerInterface;
 
 
 
@@ -28,7 +31,7 @@ class QuotationsApiService
         $this->logger = $logger;
     }
 
-    public function callAPI(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, UsersRepository $usersRepository, CompaniesRepository $companiesRepository, ProjectsRepository $projectsRepository, OpportunitiesRepository $opportunitiesRepository, ContractsRepository $contractsRepository, QuotationsRepository $quotationsRepository): Response
+    public function callAPI(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, UsersRepository $usersRepository, CompaniesRepository $companiesRepository, ProjectsRepository $projectsRepository, OpportunitiesRepository $opportunitiesRepository, ContractsRepository $contractsRepository, QuotationsRepository $quotationsRepository, QuotationLinesRepository $quotationLinesRepository,  QuotationLinesApiService $quotationLinesApiService, ProductsRepository $productsRepository): Response
     {
         $response = $this->client->request(
             'GET',
@@ -43,16 +46,17 @@ class QuotationsApiService
         $data = $response->toArray();
         $session->set('api_data', $data);
 
-        $this->dataCheck($session, $em, $logger, $usersRepository, $companiesRepository, $projectsRepository, $opportunitiesRepository, $contractsRepository, $quotationsRepository);
+        $this->dataCheck($session, $em, $logger, $usersRepository, $companiesRepository, $projectsRepository, $opportunitiesRepository, $contractsRepository, $quotationsRepository, $quotationLinesRepository, $quotationLinesApiService, $productsRepository);
 
         return new Response('Received!', Response::HTTP_OK);
     }
 
-    public function dataCheck(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, UsersRepository $usersRepository, CompaniesRepository $companiesRepository, ProjectsRepository $projectsRepository, OpportunitiesRepository $opportunitiesRepository, ContractsRepository $contractsRepository, QuotationsRepository $quotationsRepository): Response
+    public function dataCheck(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, UsersRepository $usersRepository, CompaniesRepository $companiesRepository, ProjectsRepository $projectsRepository, OpportunitiesRepository $opportunitiesRepository, ContractsRepository $contractsRepository, QuotationsRepository $quotationsRepository, QuotationLinesRepository $quotationLinesRepository,  QuotationLinesApiService $quotationLinesApiService, ProductsRepository $productsRepository): Response
     {
         $data = $session->get('api_data');
 
         foreach ($data as $quotationsData) {
+            $quotationLinesApiService->getData($session, $em, $quotationsData,  $quotationLinesRepository, $quotationsRepository, $productsRepository);
             $em->persist($this->quotationsToDatabase($quotationsData, $em, $usersRepository, $companiesRepository, $projectsRepository, $opportunitiesRepository, $contractsRepository));
         }
 
