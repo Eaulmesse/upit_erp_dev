@@ -94,23 +94,6 @@ class Invoices
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $customer_portal_url = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $billing_address_street = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $billing_address_city = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $delivery_address_street = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $delivery_address_city = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $parent_project = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $son_projects = null;
 
 
     #[ORM\Column(nullable: true)]
@@ -463,54 +446,6 @@ class Invoices
     public function setCustomerPortalUrl(?string $customer_portal_url): static
     {
         $this->customer_portal_url = $customer_portal_url;
-
-        return $this;
-    }
-
-    public function getBillingAddressStreet(): ?string
-    {
-        return $this->billing_address_street;
-    }
-
-    public function setBillingAddressStreet(?string $billing_address_street): static
-    {
-        $this->billing_address_street = $billing_address_street;
-
-        return $this;
-    }
-
-    public function getBillingAddressCity(): ?string
-    {
-        return $this->billing_address_city;
-    }
-
-    public function setBillingAddressCity(?string $billing_address_city): static
-    {
-        $this->billing_address_city = $billing_address_city;
-
-        return $this;
-    }
-
-    public function getDeliveryAddressStreet(): ?string
-    {
-        return $this->delivery_address_street;
-    }
-
-    public function setDeliveryAddressStreet(?string $delivery_address_street): static
-    {
-        $this->delivery_address_street = $delivery_address_street;
-
-        return $this;
-    }
-
-    public function getDeliveryAddressCity(): ?string
-    {
-        return $this->delivery_address_city;
-    }
-
-    public function setDeliveryAddressCity(?string $delivery_address_city): static
-    {
-        $this->delivery_address_city = $delivery_address_city;
 
         return $this;
     }

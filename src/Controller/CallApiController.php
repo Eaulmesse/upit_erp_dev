@@ -146,8 +146,8 @@ class CallApiController extends AbstractController
     }
 
     #[Route('/call/api/invoices', name: 'app_call_invoices_api')]
-    public function callInvoicesApiService(SessionInterface $session, EntityManagerInterface $em, InvoicesRepository $invoicesRepository, InvoicesApiService $invoicesApiService): Response
+    public function callInvoicesApiService(SessionInterface $session, EntityManagerInterface $em, InvoicesRepository $invoicesRepository, InvoicesApiService $invoicesApiService, ContractsRepository $contractsRepository): Response
     {
-        return $invoicesApiService->callAPI($session, $em, $invoicesRepository);
+        return $invoicesApiService->callAPI($session, $em, $invoicesRepository, $contractsRepository);
     }
 }

@@ -51,7 +51,7 @@ class ContractsApiService // Remplacement de SuppliersApiService par ContractsAp
         $data = $session->get('api_data');
 
         foreach ($data as $contractsData) {
-            $this->contractsToDatabase($contractsData, $em, $usersRepository, $companyRepository, $addressesRepository, $quotationsRepository);
+            $em->persist($this->contractsToDatabase($contractsData, $em, $usersRepository, $companyRepository, $addressesRepository, $quotationsRepository));
         }
 
         // Suppression des entités qui ne sont plus présentes dans les nouvelles données
@@ -126,9 +126,9 @@ class ContractsApiService // Remplacement de SuppliersApiService par ContractsAp
             $contracts->setInvoiceAddressStreet($invoiceAddresse->getAddressStreet());
             $contracts->setInvoiceAddressCity($invoiceAddresse->getAddressCity());
         }
-
+        
         $deliveryAddresse = $addressesRepository->findOneBy([
-            'company_id' => ["company"]["id"],
+            'company' =>  $contractsData["company"]["id"],
             'is_for_delivery' => 'true'
         ]);
 
@@ -149,8 +149,7 @@ class ContractsApiService // Remplacement de SuppliersApiService par ContractsAp
         $contracts->setGenerateAndSendRecurringInvoices($contractsData["generate_and_send_recurring_invoices"]);
         $contracts->setInvoiceFrenquencyInMonths($contractsData["invoice_frequency_in_months"]);
         $contracts->setPreauthorizedDebit($contractsData["preauthorized_debit"]);
-        $contracts->setCompany($companyRepository->find(['company']['id']));
-        $contracts->setQuotation($quotationsRepository->find(['quotation']['id']));
+        $contracts->setCompany($companyRepository->find($contractsData['company']['id']));
         $contracts->setGenerateAndSendRecurringInvoices($contractsData["generate_and_send_recurring_invoices"]);
 
         return $contracts;

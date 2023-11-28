@@ -24,7 +24,7 @@ class InvoicesApiService
         $this->logger = $logger;
     }
 
-    public function callAPI(SessionInterface $session, EntityManagerInterface $em, InvoicesRepository $invoicesRepository): Response
+    public function callAPI(SessionInterface $session, EntityManagerInterface $em, InvoicesRepository $invoicesRepository, ContractsRepository $contractsRepository): Response
     {
         $response = $this->client->request(
             'GET',
@@ -39,17 +39,17 @@ class InvoicesApiService
         $data = $response->toArray();
         $session->set('api_data', $data);
 
-        $this->dataCheck($session, $em, $invoicesRepository);
+        $this->dataCheck($session, $em, $contractsRepository, $invoicesRepository);
 
         return new Response('Received!', Response::HTTP_OK);
     }
 
-    public function dataCheck(SessionInterface $session, EntityManagerInterface $em, InvoicesRepository $invoicesRepository): Response
+    public function dataCheck(SessionInterface $session, EntityManagerInterface $em, ContractsRepository $contractsRepository,InvoicesRepository $invoicesRepository): Response
     {
         $data = $session->get('api_data');
 
         foreach ($data as $invoicesData) {
-            $em->persist($this->invoicesToDatabase($invoicesData, $em));
+            $em->persist($this->invoicesToDatabase($invoicesData, $em, $contractsRepository));
         }
 
         
@@ -69,7 +69,7 @@ class InvoicesApiService
         return new Response('Received!', Response::HTTP_OK);
     }
 
-    private function invoicesToDatabase($invoicesData, EntityManagerInterface $em, ?Invoices $invoices = null): Invoices
+    private function invoicesToDatabase($invoicesData, EntityManagerInterface $em, ContractsRepository $contractsRepository, ?Invoices $invoices = null): Invoices
     {
         $invoicesId = $invoicesData['id'];
         $invoices = $em->getRepository(Invoices::class)->find($invoicesId);
@@ -106,6 +106,18 @@ class InvoicesApiService
         $invoices->setPublicPath($invoicesData['public_path']);
         $invoices->setPaidInvoicePdf($invoicesData['paid_invoice_pdf']);
         $invoices->setCustomerPortalUrl($invoicesData['customer_portal_url']);
+        // dd($invoicesData['contract_id']);
+
+        if ($invoicesData['contract_id'] !== null) {
+            $contract = $contractsRepository->find($invoicesData['contract_id']);
+
+            if ($contract !== null) {
+                $invoices->setContracts($contract);
+            } 
+        } else {
+            $invoices->setContracts(null);
+        }
+                
 
         
         
