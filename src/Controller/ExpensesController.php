@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\ExpenseLines;
 use App\Entity\Expenses;
 use App\Repository\CompaniesRepository;
-use App\Repository\ExpenseLinesRepository;
 use Psr\Log\LoggerInterface;
 use App\Repository\ExpensesRepository;
 use App\Repository\PayslipsRepository;

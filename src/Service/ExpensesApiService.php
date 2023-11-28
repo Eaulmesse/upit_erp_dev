@@ -8,17 +8,20 @@ use App\Repository\SupplierContractRepository;
 use App\Repository\SuppliersRepository;
 use App\Repository\WorkforcesRepository;
 use Psr\Log\LoggerInterface;
-use App\Repository\UsersRepository;
-use App\Repository\AddressesRepository;
+
 use App\Repository\CompaniesRepository;
-use App\Repository\QuotationsRepository;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Entity\Expenses;
+
 use App\Repository\ExpensesRepository;
+use App\Service\ExpenseLinesApiService;
+use App\Repository\ExpenseLinesRepository;
+
+
 class ExpensesApiService
 {
     private $client;
@@ -30,7 +33,7 @@ class ExpensesApiService
         $this->logger = $logger;
     }
 
-    public function callAPI(SessionInterface $session, EntityManagerInterface $em,  ExpensesRepository $expensesRepository, SuppliersRepository $suppliersRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectsRepository $projectsRepository, SupplierContractRepository $supplierContractRepository): Response
+    public function callAPI(SessionInterface $session, EntityManagerInterface $em,  ExpensesRepository $expensesRepository, SuppliersRepository $suppliersRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectsRepository $projectsRepository, SupplierContractRepository $supplierContractRepository, ExpenseLinesApiService $expenseLinesApiService, ExpenseLinesRepository $expenseLinesRepository): Response
     {
         $response = $this->client->request(
             'GET',
@@ -45,17 +48,22 @@ class ExpensesApiService
         $data = $response->toArray();
         $session->set('api_data', $data);
 
-        $this->dataCheck($session, $em, $expensesRepository, $suppliersRepository, $companiesRepository, $workforcesRepository, $payslipsRepository, $projectsRepository, $supplierContractRepository);
+        $this->dataCheck($session, $em, $expensesRepository, $suppliersRepository, $companiesRepository, $workforcesRepository, $payslipsRepository, $projectsRepository, $supplierContractRepository, $expenseLinesApiService, $expenseLinesRepository);
 
         return new Response('Received!', Response::HTTP_OK);
     }
 
-    public function dataCheck(SessionInterface $session, EntityManagerInterface $em,  ExpensesRepository $expensesRepository, SuppliersRepository $suppliersRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectsRepository $projectsRepository, SupplierContractRepository $supplierContractRepository): Response
+    public function dataCheck(SessionInterface $session, EntityManagerInterface $em,  ExpensesRepository $expensesRepository, SuppliersRepository $suppliersRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectsRepository $projectsRepository, SupplierContractRepository $supplierContractRepository, ExpenseLinesApiService $expenseLinesApiService, ExpenseLinesRepository $expenseLinesRepository): Response
     {
         $data = $session->get('api_data');
-
+        
         foreach ($data as $expensesData) {
-            $em->persist($this->expensesToDatabase($expensesData,$em, $suppliersRepository,  $companiesRepository, $workforcesRepository, $payslipsRepository, $projectsRepository, $supplierContractRepository));
+            
+            $expenseLines = $expensesData['expense_lines'];
+
+            
+            $expenseLinesApiService->getData($session, $em, $expensesData, $expenseLines, $expenseLinesRepository, $expensesRepository);
+            $em->persist($this->expensesToDatabase($expensesData, $em, $suppliersRepository,  $companiesRepository, $workforcesRepository, $payslipsRepository, $projectsRepository, $supplierContractRepository));
         }
 
         // Suppression des entités qui ne sont plus présentes dans les nouvelles données
@@ -125,6 +133,8 @@ class ExpensesApiService
         if ($expensesData['project_id'] != null) {
             $expenses->setProject($projectsRepository->find($expensesData['project_id']));
         }
+
+
 
 
 

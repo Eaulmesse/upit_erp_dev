@@ -2,20 +2,15 @@
 
 namespace App\Controller;
 
-use App\Entity\Addresses;
-use App\Repository\ExpensesRepository;
-use App\Repository\ProjectNaturesRepository;
-use App\Repository\SupplierContractRepository;
-use App\Repository\TaxRatesRepository;
-use App\Service\SupplierContractsApiService;
-use App\Service\TaxRatesApiService;
 use Psr\Log\LoggerInterface;
 use App\Service\UsersApiService;
-
 use App\Repository\UsersRepository;
+use App\Service\ExpensesApiService;
 use App\Service\PayslipsApiService;
-
 use App\Service\ProductsApiService;
+use App\Service\ProjectsApiService;
+
+use App\Service\TaxRatesApiService;
 use App\Service\AddressesApiService;
 
 use App\Service\CompaniesApiService;
@@ -25,9 +20,15 @@ use App\Service\EmployeesApiService;
 use App\Service\SuppliersApiService;
 
 use App\Service\WorkforcesApiService;
-use App\Repository\PayslipsRepository;
+use App\Repository\ExpensesRepository;
 
+use App\Repository\PayslipsRepository;
 use App\Repository\ProductsRepository;
+
+use App\Repository\ProjectsRepository;
+use App\Repository\StatusesRepository;
+
+use App\Repository\TaxRatesRepository;
 use App\Repository\AddressesRepository;
 
 use App\Repository\CompaniesRepository;
@@ -36,20 +37,21 @@ use App\Repository\ContractsRepository;
 use App\Repository\EmployeesRepository;
 use App\Repository\SuppliersRepository;
 
-use App\Repository\OpportunitiesRepository;
-use App\Service\OpportunitiesApiService;
-
-use App\Repository\ProjectsRepository;
-use App\Repository\StatusesRepository;
-use App\Service\ProjectsApiService;
-
-use App\Service\ExpensesApiService;
-
-
-
+use App\Service\ExpenseLinesApiService;
 use App\Repository\QuotationsRepository;
 use App\Repository\WorkforcesRepository;
+
+use App\Service\OpportunitiesApiService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ExpenseLinesRepository;
+
+use App\Service\InvoicesApiService;
+use App\Repository\InvoicesRepository; 
+
+use App\Repository\OpportunitiesRepository;
+use App\Repository\ProjectNaturesRepository;
+use App\Service\SupplierContractsApiService;
+use App\Repository\SupplierContractRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -138,8 +140,14 @@ class CallApiController extends AbstractController
     }
 
     #[Route('/call/api/expenses', name: 'app_call_expenses_api')]
-    public function callExpensesApiService(SessionInterface $session, EntityManagerInterface $em,  ExpensesRepository $expensesRepository, SuppliersRepository $suppliersRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectsRepository $projectsRepository, SupplierContractRepository $supplierContractRepository, ExpensesApiService $expensesApiService): Response
+    public function callExpensesApiService(SessionInterface $session, EntityManagerInterface $em,  ExpensesRepository $expensesRepository, SuppliersRepository $suppliersRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectsRepository $projectsRepository, SupplierContractRepository $supplierContractRepository, ExpensesApiService $expensesApiService, ExpenseLinesApiService $expenseLinesApiService,  ExpenseLinesRepository $expenseLinesRepository): Response
     {
-        return $expensesApiService->callAPI($session, $em, $expensesRepository, $suppliersRepository, $companiesRepository, $workforcesRepository, $payslipsRepository, $projectsRepository, $supplierContractRepository);
+        return $expensesApiService->callAPI($session, $em, $expensesRepository, $suppliersRepository, $companiesRepository, $workforcesRepository, $payslipsRepository, $projectsRepository, $supplierContractRepository, $expenseLinesApiService, $expenseLinesRepository);
+    }
+
+    #[Route('/call/api/invoices', name: 'app_call_invoices_api')]
+    public function callInvoicesApiService(SessionInterface $session, EntityManagerInterface $em, InvoicesRepository $invoicesRepository, InvoicesApiService $invoicesApiService): Response
+    {
+        return $invoicesApiService->callAPI($session, $em, $invoicesRepository);
     }
 }

@@ -120,6 +120,10 @@ app_call_expenses:
     path: '/call/api/expenses'
     controller: 'App\Controller\CallApiController::callExpensesApiService'
 
+app_call_invoices:
+    path: '/call/api/invoices'
+    controller: 'App\Controller\CallApiController::callInvoicesApiService'
+
 
 
 

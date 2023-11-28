@@ -86,25 +86,18 @@ class Contracts
     #[ORM\ManyToOne(inversedBy: 'contracts')]
     private ?Companies $company = null;
 
-    // #[ORM\Column(type: Types::TEXT, nullable: true)]
-    // private ?string $project = null;
-
-    
-
-    #[ORM\OneToMany(mappedBy: 'contract', targetEntity: Invoices::class)]
-    private Collection $project;
+    #[ORM\OneToMany(mappedBy: 'contracts', targetEntity: Quotations::class)]
+    private Collection $quotations;
 
     #[ORM\OneToMany(mappedBy: 'contracts', targetEntity: Invoices::class)]
     private Collection $invoices;
 
-    #[ORM\OneToMany(mappedBy: 'contract', targetEntity: Quotations::class)]
-    private Collection $quotations;
-
     public function __construct()
     {
-        $this->project = new ArrayCollection();
-        $this->invoices = new ArrayCollection();
+        // $this->project = new ArrayCollection();
+        
         $this->quotations = new ArrayCollection();
+        $this->invoices = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -412,27 +405,57 @@ class Contracts
     /**
      * @return Collection<int, Invoices>
      */
-    public function getProject(): Collection
+    // public function getProject(): Collection
+    // {
+    //     return $this->project;
+    // }
+
+    // public function addProject(Invoices $project): static
+    // {
+    //     if (!$this->project->contains($project)) {
+    //         $this->project->add($project);
+    //         $project->setContract($this);
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeProject(Invoices $project): static
+    // {
+    //     if ($this->project->removeElement($project)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($project->getContract() === $this) {
+    //             $project->setContract(null);
+    //         }
+    //     }
+
+    //     return $this;
+    // }
+
+    /**
+     * @return Collection<int, Quotations>
+     */
+    public function getQuotations(): Collection
     {
-        return $this->project;
+        return $this->quotations;
     }
 
-    public function addProject(Invoices $project): static
+    public function addQuotation(Quotations $quotation): static
     {
-        if (!$this->project->contains($project)) {
-            $this->project->add($project);
-            $project->setContract($this);
+        if (!$this->quotations->contains($quotation)) {
+            $this->quotations->add($quotation);
+            $quotation->setContract($this);
         }
 
         return $this;
     }
 
-    public function removeProject(Invoices $project): static
+    public function removeQuotation(Quotations $quotation): static
     {
-        if ($this->project->removeElement($project)) {
+        if ($this->quotations->removeElement($quotation)) {
             // set the owning side to null (unless already changed)
-            if ($project->getContract() === $this) {
-                $project->setContract(null);
+            if ($quotation->getContract() === $this) {
+                $quotation->setContract(null);
             }
         }
 
@@ -463,36 +486,6 @@ class Contracts
             // set the owning side to null (unless already changed)
             if ($invoice->getContracts() === $this) {
                 $invoice->setContracts(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Quotations>
-     */
-    public function getQuotations(): Collection
-    {
-        return $this->quotations;
-    }
-
-    public function addQuotation(Quotations $quotation): static
-    {
-        if (!$this->quotations->contains($quotation)) {
-            $this->quotations->add($quotation);
-            $quotation->setContract($this);
-        }
-
-        return $this;
-    }
-
-    public function removeQuotation(Quotations $quotation): static
-    {
-        if ($this->quotations->removeElement($quotation)) {
-            // set the owning side to null (unless already changed)
-            if ($quotation->getContract() === $this) {
-                $quotation->setContract(null);
             }
         }
 
