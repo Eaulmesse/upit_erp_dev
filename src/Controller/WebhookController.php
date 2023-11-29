@@ -2,17 +2,23 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\AddressesRepository;
+use App\Repository\CompaniesRepository;
+use App\Service\CompaniesWebhookService;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class WebhookController extends AbstractController
 {
-    #[Route('/webhook', name: 'app_webhook')]
-    public function index(): Response
+    #[Route('/webhook/companies', name: 'app_webhook_companies')]
+    public function callWebhookCompanies(Request $request, SessionInterface $session, EntityManagerInterface $em, CompaniesRepository $companiesRepository, AddressesRepository $addressesRepository, CompaniesWebhookService $companiesWebhookService): Response
     {
-        return $this->render('webhook/index.html.twig', [
-            'controller_name' => 'WebhookController',
-        ]);
+        $data = $companiesWebhookService->getWebhookCompanies($request, $session, $em, $companiesRepository, $addressesRepository);
+
+        return $data;
     }
 }
