@@ -27,26 +27,25 @@ class CompaniesWebhookService
         $this->client = $client;
     }
 
-    public function getWebhookCompanies(Request $request, SessionInterface $session, EntityManagerInterface $em, CompaniesRepository $companiesRepository, AddressesRepository $addressesRepository): Response
-    {
+    public function getWebhookCompanies(Request $request, SessionInterface $session,  LoggerInterface $logger, EntityManagerInterface $em, CompaniesRepository $companiesRepository, AddressesRepository $addressesRepository, AddressesWebhookService $addressesWebhookService): Response
+{
         $response = json_decode($request->getContent(), true);
 
         if ($response === null) {
             $this->logger->error('Invalid JSON received.');
             return new Response('Invalid JSON', Response::HTTP_BAD_REQUEST);
         }
-        
+
         $session->set('webhook_data', $response);
         $this->logger->info('Webhook received!', $response);
 
         $this->webhookCompaniesFilter($session, $em, $addressesRepository, $companiesRepository);
 
-        // return $this->forward('App\Controller\AddressesController::GetWebhookFromCompanies', [
-        //     'responseData' => $response,
-        // ]);
-
-        return new Response('Received!', Response::HTTP_OK);
+        $addressesWebhookService->getWebhookAddresses($response, $session, $logger, $em, $addressesRepository, $companiesRepository);
+        
+        return new Response('Done!', Response::HTTP_OK);
     }
+
 
     private function createCompany($webhookData, EntityManagerInterface $em, CompaniesRepository $companiesRepository): void {
 
