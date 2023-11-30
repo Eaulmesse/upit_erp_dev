@@ -19,13 +19,13 @@ class Invoices
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $order_number = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $sent_date = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $due_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
@@ -94,8 +94,6 @@ class Invoices
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $customer_portal_url = null;
 
-
-
     #[ORM\Column(nullable: true)]
     private ?float $pre_tax_amount = null;
 
@@ -143,7 +141,7 @@ class Invoices
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): static
+    public function setDate(?\DateTimeInterface $date): static
     {
         $this->date = $date;
 
@@ -155,7 +153,7 @@ class Invoices
         return $this->sent_date;
     }
 
-    public function setSentDate(\DateTimeInterface $sent_date): static
+    public function setSentDate(?\DateTimeInterface $sent_date): static
     {
         $this->sent_date = $sent_date;
 
@@ -167,7 +165,7 @@ class Invoices
         return $this->due_date;
     }
 
-    public function setDueDate(\DateTimeInterface $due_date): static
+    public function setDueDate(?\DateTimeInterface $due_date): static
     {
         $this->due_date = $due_date;
 

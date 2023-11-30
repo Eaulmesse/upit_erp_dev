@@ -11,125 +11,125 @@ use Psr\Log\LoggerInterface;
 
 class ApiService
 {
-    private $httpClient;
-    private $logger;
+//     private $httpClient;
+//     private $logger;
 
-    public function __construct(HttpClientInterface $httpClient, LoggerInterface $logger)
-    {
-        $this->httpClient = $httpClient;
-        $this->logger = $logger;
-    }
+//     public function __construct(HttpClientInterface $httpClient, LoggerInterface $logger)
+//     {
+//         $this->httpClient = $httpClient;
+//         $this->logger = $logger;
+//     }
 
-    public function fetchData(array $config)
-    {
-        $response = $this->httpClient->request('GET', $config['url'], [
-            'headers' => ['userApiKey' => $_ENV['API_KEY']]
-        ]);
+//     public function fetchData(array $config)
+//     {
+//         $response = $this->httpClient->request('GET', $config['url'], [
+//             'headers' => ['userApiKey' => $_ENV['API_KEY']]
+//         ]);
 
         
-        if ($response->getStatusCode() === 200) {
+//         if ($response->getStatusCode() === 200) {
 
-            return json_decode($response->getContent(), true);
-        } else {
+//             return json_decode($response->getContent(), true);
+//         } else {
 
-            throw new \Exception('Échec de la récupération des données depuis l\'API');
-        }
-    }
+//             throw new \Exception('Échec de la récupération des données depuis l\'API');
+//         }
+//     }
 
-    public function dataCheck($data, $className, $object, $repository, EntityManagerInterface $em)
-    {   
+//     public function dataCheck($data, $className, $object, $repository, EntityManagerInterface $em)
+//     {   
 
-        foreach($data as $line) {
+//         foreach($data as $line) {
 
-            $inDatabaseId = $repository->find($line['id']);
+//             $inDatabaseId = $repository->find($line['id']);
             
-            if ($inDatabaseId == null) {
-                $inDatabaseId = $this->MapToDatabase($repository, $className, $object,  $line, $em);
-                $em->persist($inDatabaseId);
-            }   
-        }
+//             if ($inDatabaseId == null) {
+//                 $inDatabaseId = $this->MapToDatabase($repository, $className, $object,  $line, $em);
+//                 $em->persist($inDatabaseId);
+//             }   
+//         }
 
-        $IdsInData = array_map(function($line) {
-            return $line['id'];
-        }, $data);
+//         $IdsInData = array_map(function($line) {
+//             return $line['id'];
+//         }, $data);
 
-        $allObjets = $repository->findall();
-        foreach ($allObjets as $line) {
-            if (!in_array($line->getId(), $IdsInData)) {
-                $em->remove($line);
-            }
-        }
+//         $allObjets = $repository->findall();
+//         foreach ($allObjets as $line) {
+//             if (!in_array($line->getId(), $IdsInData)) {
+//                 $em->remove($line);
+//             }
+//         }
 
         
         
-    }
+//     }
 
-    public function MapToDatabase($repository, $className, $object,  $line, EntityManagerInterface $em): object
-    { 
-        $metadata = $em->getClassMetadata('App\Entity\\' . ucfirst($className));
-        $classRepository = $em->getRepository('App\Entity\\' . ucfirst($className));
+//     public function MapToDatabase($repository, $className, $object,  $line, EntityManagerInterface $em): object
+//     { 
+//         $metadata = $em->getClassMetadata('App\Entity\\' . ucfirst($className));
+//         $classRepository = $em->getRepository('App\Entity\\' . ucfirst($className));
         
-        $class = new \ReflectionClass($metadata->getName());
-        $entity = $class->newInstance();
+//         $class = new \ReflectionClass($metadata->getName());
+//         $entity = $class->newInstance();
 
-        $arrayValue = array();
-        foreach($line as $value)
-        {
-            array_push($arrayValue, $value);
-        }
+//         $arrayValue = array();
+//         foreach($line as $value)
+//         {
+//             array_push($arrayValue, $value);
+//         }
         
-        $i = 0;
-        foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-            if(str_contains($method->name, "set"))
-            {   
-                try {
+//         $i = 0;
+//         foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+//             if(str_contains($method->name, "set"))
+//             {   
+//                 try {
 
                     
-                    // Création des méthodes
-                    $methodName = $method->getParameters()[0]->name;
-                    $methodType = $class->getProperty($methodName)->getType()->getName();
-                    $methodValue = "";
+//                     // Création des méthodes
+//                     $methodName = $method->getParameters()[0]->name;
+//                     $methodType = $class->getProperty($methodName)->getType()->getName();
+//                     $methodValue = "";
 
 
-                    $setter = $method->name;
+//                     $setter = $method->name;
                 
                 
-                    switch ($methodType) {
-                        case 'DateTimeInterface':
+//                     switch ($methodType) {
+//                         case 'DateTimeInterface':
     
-                            $entity->$setter(new \DateTime($arrayValue[$i]));
-                            break;
+//                             $entity->$setter(new \DateTime($arrayValue[$i]));
+//                             break;
     
-                        case str_contains($methodType, "Entity"):
+//                         case str_contains($methodType, "Entity"):
     
-                            $methodValue = $arrayValue[$i] ?? null;
-                            if ($methodValue !== null) {
-                            $joinRepository = $em->getRepository($methodType);
-                            $methodValue = $joinRepository->find($methodValue);
-                            }
-                            break;
+//                             $methodValue = $arrayValue[$i] ?? null;
+//                             if ($methodValue !== null) {
+//                             $joinRepository = $em->getRepository($methodType);
+//                             $methodValue = $joinRepository->find($methodValue);
+//                             }
+//                             break;
                         
-                        default:
-                            $entity->$setter($arrayValue[$i]);
-                            break;
-                    }
-                    $i++;
-                }
-                catch (\Exception $e) {
-                    dd($e);
-                }
+//                         default:
+//                             $entity->$setter($arrayValue[$i]);
+//                             break;
+//                     }
+//                     $i++;
+//                 }
+//                 catch (\Exception $e) {
+//                     dd($e);
+//                 }
                 
-            }
-         }  
+//             }
+//          }  
 
         
-        return $entity;
-    }    
+//         return $entity;
+//     }    
 
-    public function saveEntities(EntityManagerInterface $em): void
-    {
-        $em->flush();
-    }
+//     public function saveEntities(EntityManagerInterface $em): void
+//     {
+//         $em->flush();
+//     }
 
         
         

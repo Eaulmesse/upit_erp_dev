@@ -81,15 +81,35 @@ class InvoicesApiService
 
         $invoices->setNumber($invoicesData['number']);
         $invoices->setOrderNumber($invoicesData['order_number']);
-        $invoices->setDate(new \DateTime($invoicesData['date']));
-        $invoices->setSentDate(new \DateTime($invoicesData['sent_date']));
-        $invoices->setDueDate(new \DateTime($invoicesData['due_date']));
-        $invoices->setPaidDate(new \DateTime($invoicesData['paid_date']));
-        $invoices->setDeliveryDate(new \DateTime($invoicesData['delivery_date']));
-        $invoices->setLastUpdateDate(new \DateTime($invoicesData['last_update_date']));
+
+        if($invoicesData['date']) {
+            $invoices->setDate(new \DateTime($invoicesData['date']));
+        }
+
+        if($invoicesData['sent_date']) {
+            $invoices->setSentDate(new \DateTime($invoicesData['sent_date']));
+        }
+        
+        if($invoicesData['due_date']) {
+            $invoices->setDueDate(new \DateTime($invoicesData['due_date']));
+        }
+        
+        if($invoicesData['paid_date']) {
+            $invoices->setPaidDate(new \DateTime($invoicesData['paid_date']));
+        }
+        
+        if($invoicesData['delivery_date']) {
+            $invoices->setDeliveryDate(new \DateTime($invoicesData['delivery_date']));
+        }
+        
+        if($invoicesData['last_update_date']) {
+            $invoices->setLastUpdateDate(new \DateTime($invoicesData['last_update_date']));
+        }
+        
         $invoices->setPreTaxAmount($invoicesData['pre_tax_amount']);
         $invoices->setTaxAmount($invoicesData['tax_amount']);
         $invoices->setTotal($invoicesData['total']);
+        // dd($invoicesData['deposits']['deposit_percent']);
         $invoices->setDepositPercent($invoicesData['deposits']['deposit_percent']);
         $invoices->setDiscountsAmount($invoicesData['discounts']['amount']);
         $invoices->setDiscountsAmountWithTax($invoicesData['discounts']['amount_with_tax']);
@@ -106,7 +126,6 @@ class InvoicesApiService
         $invoices->setPublicPath($invoicesData['public_path']);
         $invoices->setPaidInvoicePdf($invoicesData['paid_invoice_pdf']);
         $invoices->setCustomerPortalUrl($invoicesData['customer_portal_url']);
-        // dd($invoicesData['contract_id']);
 
         if ($invoicesData['contract_id'] !== null) {
             $contract = $contractsRepository->find($invoicesData['contract_id']);
