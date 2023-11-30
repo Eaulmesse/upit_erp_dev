@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\InvoicesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -99,6 +101,15 @@ class Invoices
 
     #[ORM\ManyToOne(inversedBy: 'invoices')]
     private ?Contracts $contracts = null;
+
+    #[ORM\OneToMany(mappedBy: 'invoice', targetEntity: InvoiceLines::class)]
+    private Collection $invoiceLines;
+
+
+    public function __construct()
+    {
+        $this->invoiceLines = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -456,6 +467,36 @@ class Invoices
     public function setContracts(?Contracts $contracts): static
     {
         $this->contracts = $contracts;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InvoiceLines>
+     */
+    public function getInvoiceLines(): Collection
+    {
+        return $this->invoiceLines;
+    }
+
+    public function addInvoiceLine(InvoiceLines $invoiceLine): static
+    {
+        if (!$this->invoiceLines->contains($invoiceLine)) {
+            $this->invoiceLines->add($invoiceLine);
+            $invoiceLine->setInvoice($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInvoiceLine(InvoiceLines $invoiceLine): static
+    {
+        if ($this->invoiceLines->removeElement($invoiceLine)) {
+            // set the owning side to null (unless already changed)
+            if ($invoiceLine->getInvoice() === $this) {
+                $invoiceLine->setInvoice(null);
+            }
+        }
 
         return $this;
     }

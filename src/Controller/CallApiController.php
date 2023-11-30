@@ -42,15 +42,17 @@ use App\Repository\InvoicesRepository;
 use App\Repository\SuppliersRepository;
 
 use App\Service\ExpenseLinesApiService;
+use App\Service\InvoiceLinesApiService;
 use App\Repository\QuotationsRepository;
+
 use App\Repository\WorkforcesRepository;
-
 use App\Service\OpportunitiesApiService;
-use Doctrine\ORM\EntityManagerInterface;
 
+use Doctrine\ORM\EntityManagerInterface;
 use App\Service\ProjectNaturesApiService;
 use App\Service\QuotationLinesApiService;
 use App\Repository\ExpenseLinesRepository;
+use App\Repository\InvoiceLinesRepository;
 use App\Repository\OpportunitiesRepository;
 use App\Repository\ProjectNaturesRepository;
 use App\Repository\QuotationLinesRepository;
@@ -150,9 +152,9 @@ class CallApiController extends AbstractController
     }
 
     #[Route('/call/api/invoices', name: 'app_call_invoices_api')]
-    public function callInvoicesApiService(SessionInterface $session, EntityManagerInterface $em, InvoicesRepository $invoicesRepository, InvoicesApiService $invoicesApiService, ContractsRepository $contractsRepository): Response
+    public function callInvoicesApiService(SessionInterface $session, EntityManagerInterface $em, InvoicesRepository $invoicesRepository, InvoicesApiService $invoicesApiService, ContractsRepository $contractsRepository, InvoiceLinesRepository $invoiceLinesRepository, InvoiceLinesApiService $invoiceLinesApiService, ProductsRepository $productsRepository, TaxRatesRepository $taxRatesRepository): Response
     {
-        return $invoicesApiService->callAPI($session, $em, $invoicesRepository, $contractsRepository);
+        return $invoicesApiService->callAPI($session, $em, $invoicesRepository, $contractsRepository, $invoiceLinesRepository, $invoiceLinesApiService, $productsRepository, $taxRatesRepository);
     }
 
     #[Route('/call/api/quotations', name: 'app_call_quotations_api')]

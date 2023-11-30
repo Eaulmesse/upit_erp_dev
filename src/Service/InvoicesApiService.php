@@ -2,12 +2,16 @@
 
 namespace App\Service;
 
-use App\Entity\Invoices;
-use App\Repository\InvoicesRepository; 
-use App\Repository\ContractsRepository;
 use DateTime;
+use App\Entity\Invoices;
 use Psr\Log\LoggerInterface;
+use App\Repository\ProductsRepository;
+use App\Repository\TaxRatesRepository;
+use App\Repository\ContractsRepository;
+use App\Repository\InvoicesRepository; 
+use App\Service\InvoiceLinesApiService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\InvoiceLinesRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -24,7 +28,7 @@ class InvoicesApiService
         $this->logger = $logger;
     }
 
-    public function callAPI(SessionInterface $session, EntityManagerInterface $em, InvoicesRepository $invoicesRepository, ContractsRepository $contractsRepository): Response
+    public function callAPI(SessionInterface $session, EntityManagerInterface $em, InvoicesRepository $invoicesRepository, ContractsRepository $contractsRepository, InvoiceLinesRepository $invoiceLinesRepository, InvoiceLinesApiService $invoiceLinesApiService, ProductsRepository $productsRepository, TaxRatesRepository $taxRatesRepository): Response
     {
         $response = $this->client->request(
             'GET',
@@ -39,17 +43,20 @@ class InvoicesApiService
         $data = $response->toArray();
         $session->set('api_data', $data);
 
-        $this->dataCheck($session, $em, $contractsRepository, $invoicesRepository);
+        $this->dataCheck($session, $em, $contractsRepository, $invoicesRepository, $invoiceLinesApiService, $invoiceLinesRepository, $productsRepository, $taxRatesRepository);
 
         return new Response('Received!', Response::HTTP_OK);
     }
 
-    public function dataCheck(SessionInterface $session, EntityManagerInterface $em, ContractsRepository $contractsRepository,InvoicesRepository $invoicesRepository): Response
+    public function dataCheck(SessionInterface $session, EntityManagerInterface $em, ContractsRepository $contractsRepository, InvoicesRepository $invoicesRepository, InvoiceLinesApiService $invoiceLinesApiService, InvoiceLinesRepository $invoiceLinesRepository, ProductsRepository $productsRepository, TaxRatesRepository $taxRatesRepository): Response
     {
         $data = $session->get('api_data');
 
         foreach ($data as $invoicesData) {
+
             $em->persist($this->invoicesToDatabase($invoicesData, $em, $contractsRepository));
+            $invoiceLinesApiService->getData($session, $em, $invoicesData, $invoiceLinesRepository, $invoicesRepository, $productsRepository, $taxRatesRepository);
+
         }
 
         
