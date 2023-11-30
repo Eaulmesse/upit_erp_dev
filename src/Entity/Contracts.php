@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
 class Contracts
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -34,28 +33,6 @@ class Contracts
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $expected_delivery_date = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $company_name = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $contact_name = null;
-
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $street = null;
-
-    #[ORM\Column]
-    private ?int $zip_code = null;
-
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $city = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $region = null;
-
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $country = null;
-
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $first_invoice_planned_date = null;
 
@@ -71,40 +48,21 @@ class Contracts
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $last_update_date = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $invoice_address_street = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $invoice_address_city = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $delivery_address_street = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $delivery_address_city = null;
-
     #[ORM\ManyToOne(inversedBy: 'contracts')]
     private ?Companies $company = null;
 
-    // #[ORM\Column(type: Types::TEXT, nullable: true)]
-    // private ?string $project = null;
-
-    
-
-    #[ORM\OneToMany(mappedBy: 'contract', targetEntity: Invoices::class)]
-    private Collection $project;
+    #[ORM\OneToMany(mappedBy: 'contracts', targetEntity: Quotations::class)]
+    private Collection $quotations;
 
     #[ORM\OneToMany(mappedBy: 'contracts', targetEntity: Invoices::class)]
     private Collection $invoices;
 
-    #[ORM\OneToMany(mappedBy: 'contract', targetEntity: Quotations::class)]
-    private Collection $quotations;
-
     public function __construct()
     {
-        $this->project = new ArrayCollection();
-        $this->invoices = new ArrayCollection();
+        // $this->project = new ArrayCollection();
+        
         $this->quotations = new ArrayCollection();
+        $this->invoices = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -187,90 +145,6 @@ class Contracts
     public function setExpectedDeliveryDate(?\DateTimeInterface $expected_delivery_date): static
     {
         $this->expected_delivery_date = $expected_delivery_date;
-
-        return $this;
-    }
-
-    public function getCompanyName(): ?string
-    {
-        return $this->company_name;
-    }
-
-    public function setCompanyName(string $company_name): static
-    {
-        $this->company_name = $company_name;
-
-        return $this;
-    }
-
-    public function getContactName(): ?string
-    {
-        return $this->contact_name;
-    }
-
-    public function setContactName(string $contact_name): static
-    {
-        $this->contact_name = $contact_name;
-
-        return $this;
-    }
-
-    public function getStreet(): ?string
-    {
-        return $this->street;
-    }
-
-    public function setStreet(string $street): static
-    {
-        $this->street = $street;
-
-        return $this;
-    }
-
-    public function getZipCode(): ?int
-    {
-        return $this->zip_code;
-    }
-
-    public function setZipCode(int $zip_code): static
-    {
-        $this->zip_code = $zip_code;
-
-        return $this;
-    }
-
-    public function getCity(): ?string
-    {
-        return $this->city;
-    }
-
-    public function setCity(string $city): static
-    {
-        $this->city = $city;
-
-        return $this;
-    }
-
-    public function getRegion(): ?string
-    {
-        return $this->region;
-    }
-
-    public function setRegion(?string $region): static
-    {
-        $this->region = $region;
-
-        return $this;
-    }
-
-    public function getCountry(): ?string
-    {
-        return $this->country;
-    }
-
-    public function setCountry(string $country): static
-    {
-        $this->country = $country;
 
         return $this;
     }
@@ -361,78 +235,60 @@ class Contracts
         return $this;
     }
 
-    public function getInvoiceAddressStreet(): ?string
-    {
-        return $this->invoice_address_street;
-    }
-
-    public function setInvoiceAddressStreet(string $invoice_address_street): static
-    {
-        $this->invoice_address_street = $invoice_address_street;
-
-        return $this;
-    }
-
-    public function getInvoiceAddressCity(): ?string
-    {
-        return $this->invoice_address_city;
-    }
-
-    public function setInvoiceAddressCity(string $invoice_address_city): static
-    {
-        $this->invoice_address_city = $invoice_address_city;
-
-        return $this;
-    }
-
-    public function getDeliveryAddressStreet(): ?string
-    {
-        return $this->delivery_address_street;
-    }
-
-    public function setDeliveryAddressStreet(?string $delivery_address_street): static
-    {
-        $this->delivery_address_street = $delivery_address_street;
-
-        return $this;
-    }
-
-    public function getDeliveryAddressCity(): ?string
-    {
-        return $this->delivery_address_city;
-    }
-
-    public function setDeliveryAddressCity(?string $delivery_address_city): static
-    {
-        $this->delivery_address_city = $delivery_address_city;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Invoices>
      */
-    public function getProject(): Collection
+    // public function getProject(): Collection
+    // {
+    //     return $this->project;
+    // }
+
+    // public function addProject(Invoices $project): static
+    // {
+    //     if (!$this->project->contains($project)) {
+    //         $this->project->add($project);
+    //         $project->setContract($this);
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeProject(Invoices $project): static
+    // {
+    //     if ($this->project->removeElement($project)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($project->getContract() === $this) {
+    //             $project->setContract(null);
+    //         }
+    //     }
+
+    //     return $this;
+    // }
+
+    /**
+     * @return Collection<int, Quotations>
+     */
+    public function getQuotations(): Collection
     {
-        return $this->project;
+        return $this->quotations;
     }
 
-    public function addProject(Invoices $project): static
+    public function addQuotation(Quotations $quotation): static
     {
-        if (!$this->project->contains($project)) {
-            $this->project->add($project);
-            $project->setContract($this);
+        if (!$this->quotations->contains($quotation)) {
+            $this->quotations->add($quotation);
+            $quotation->setContract($this);
         }
 
         return $this;
     }
 
-    public function removeProject(Invoices $project): static
+    public function removeQuotation(Quotations $quotation): static
     {
-        if ($this->project->removeElement($project)) {
+        if ($this->quotations->removeElement($quotation)) {
             // set the owning side to null (unless already changed)
-            if ($project->getContract() === $this) {
-                $project->setContract(null);
+            if ($quotation->getContract() === $this) {
+                $quotation->setContract(null);
             }
         }
 
@@ -463,36 +319,6 @@ class Contracts
             // set the owning side to null (unless already changed)
             if ($invoice->getContracts() === $this) {
                 $invoice->setContracts(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Quotations>
-     */
-    public function getQuotations(): Collection
-    {
-        return $this->quotations;
-    }
-
-    public function addQuotation(Quotations $quotation): static
-    {
-        if (!$this->quotations->contains($quotation)) {
-            $this->quotations->add($quotation);
-            $quotation->setContract($this);
-        }
-
-        return $this;
-    }
-
-    public function removeQuotation(Quotations $quotation): static
-    {
-        if ($this->quotations->removeElement($quotation)) {
-            // set the owning side to null (unless already changed)
-            if ($quotation->getContract() === $this) {
-                $quotation->setContract(null);
             }
         }
 

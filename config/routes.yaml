@@ -100,6 +100,43 @@ app_call_contracts_api:
     path: '/call/api/contracts'
     controller: 'App\Controller\CallApiController::callContractsService'
 
+app_call_opportunities_api:
+    path: '/call/api/opportunities'
+    controller: 'App\Controller\CallApiController::callOpportunitiesService'
+
+app_call_projects_api:
+    path: '/call/api/projects'
+    controller: 'App\Controller\CallApiController::callProjectsService'
+
+app_call_taxRates_api:
+    path: '/call/api/taxRates'
+    controller: 'App\Controller\CallApiController::callTaxRatesService'
+
+app_call_supplierContracts_api:
+    path: '/call/api/supplierContracts'
+    controller: 'App\Controller\CallApiController::callSupplierContractsService'
+
+app_call_expenses:
+    path: '/call/api/expenses'
+    controller: 'App\Controller\CallApiController::callExpensesApiService'
+
+app_call_invoices:
+    path: '/call/api/invoices'
+    controller: 'App\Controller\CallApiController::callInvoicesApiService'
+
+app_call_quotations:
+    path: '/call/api/quotations'
+    controller: 'App\Controller\CallApiController::callQuotationsApiService'
+
+app_call_projectNatures:
+    path: '/call/api/projectNatures'
+    controller: 'App\Controller\CallApiController::callProjectNaturesApiService'
+
+
+
+
+
+
 
 
 

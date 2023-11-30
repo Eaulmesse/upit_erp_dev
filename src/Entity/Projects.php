@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
 class Projects
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -61,11 +60,6 @@ class Projects
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $actual_end = null;
 
-    #[ORM\ManyToMany(targetEntity: Workforces::class, inversedBy: 'projects')]
-    private Collection $workforces;
-
-    
-
     #[ORM\OneToMany(mappedBy: 'project', targetEntity: Expenses::class)]
     private Collection $expenses;
 
@@ -83,6 +77,10 @@ class Projects
 
     #[ORM\ManyToOne(inversedBy: 'projects')]
     private ?Statuses $statuses = null;
+
+    #[ORM\ManyToOne(inversedBy: 'projects')]
+    private ?Users $users = null;
+
 
     public function __construct()
     {
@@ -308,29 +306,7 @@ class Projects
         return $this;
     }
 
-    /**
-     * @return Collection<int, Workforces>
-     */
-    public function getWorkforces(): Collection
-    {
-        return $this->workforces;
-    }
 
-    public function addWorkforce(Workforces $workforce): static
-    {
-        if (!$this->workforces->contains($workforce)) {
-            $this->workforces->add($workforce);
-        }
-
-        return $this;
-    }
-
-    public function removeWorkforce(Workforces $workforce): static
-    {
-        $this->workforces->removeElement($workforce);
-
-        return $this;
-    }
 
 
     /**
@@ -362,9 +338,6 @@ class Projects
 
         return $this;
     }
-
-    
-
     
 
     /**
@@ -405,6 +378,18 @@ class Projects
     public function setStatuses(?Statuses $statuses): static
     {
         $this->statuses = $statuses;
+
+        return $this;
+    }
+
+    public function getUsers(): ?Users
+    {
+        return $this->users;
+    }
+
+    public function setUsers(?Users $users): static
+    {
+        $this->users = $users;
 
         return $this;
     }

@@ -29,7 +29,10 @@ class AddressesApiService
     {
         $companies = $companiesRepository->findAll();
 
-        foreach($companies as $company) {
+        $limit = 10;// Limite de boucle
+        $data = array();
+        for ($i = 0; $i < $limit; $i++) {
+            $company = $companies[$i];
             $companyId = $company->getId();
 
             $response = $this->client->request(
@@ -39,18 +42,23 @@ class AddressesApiService
                     'headers' => [
                         'userApiKey' => $_ENV['API_KEY'],
                     ],
-                    'query' => [
-                        'limit' => 10,  // Remplacez 10 par le nombre que vous souhaitez
-                    ],
                 ]
             );
 
-            $data = $response->toArray();
+            // $data = $response->toArray();
+            array_push($data, $response->toArray());
+            
 
-            $session->set('api_data', $data);
-
-            $this->dataCheck($session, $em, $logger, $addressesRepository,$companiesRepository);
+            
         }
+        foreach($data as $array) {
+            // print_r($array);
+            $session->set('api_data', $array);
+            $this->dataCheck($session, $em, $logger, $addressesRepository, $companiesRepository);
+        }
+
+        // dd($data);
+        
     
         
         return new Response('Received!', Response::HTTP_OK);
@@ -66,16 +74,16 @@ class AddressesApiService
         }
 
         // Suppression des entités qui ne sont plus présentes dans les nouvelles données
-        $addressesIdsInData = array_map(function ($addressesData) {
-            return $addressesData['id'];
-        }, $data);
+        // $addressesIdsInData = array_map(function ($addressesData) {
+        //     return $addressesData['id'];
+        // }, $data);
 
-        $allAddresses = $addressesRepository->findAll();
-        foreach ($allAddresses as $addresses) {
-            if (!in_array($addresses->getId(), $addressesIdsInData)) {
-                $em->remove($addresses);
-            }
-        }
+        // $allAddresses = $addressesRepository->findAll();
+        // foreach ($allAddresses as $addresses) {
+        //     if (!in_array($addresses->getId(), $addressesIdsInData)) {
+        //         $em->remove($addresses);
+        //     }
+        // }
 
         $this->saveAddresses($em);
         
@@ -84,7 +92,7 @@ class AddressesApiService
 
     private function addressesToDatabase($addressesData, CompaniesRepository $companiesRepository,  EntityManagerInterface $em, ?Addresses $addresses = null): Addresses
     {
-
+        // dd($addressesData);
         $addressesId = $addressesData['id'];
         $addresses = $em->getRepository(Addresses::class)->find($addressesId);
 

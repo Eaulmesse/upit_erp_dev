@@ -99,7 +99,7 @@ class TaxRates
         return $this->accounting_code_collected;
     }
 
-    public function setAccountingCodeCollected(string $accounting_code_collected): static
+    public function setAccountingCodeCollected(?string $accounting_code_collected): static
     {
         $this->accounting_code_collected = $accounting_code_collected;
 
@@ -123,7 +123,7 @@ class TaxRates
         return $this->is_expenses_intracommunity_tax_rate;
     }
 
-    public function setIsExpensesIntracommunityTaxRate(bool $is_expenses_intracommunity_tax_rate): static
+    public function setIsExpensesIntracommunityTaxRate(?bool $is_expenses_intracommunity_tax_rate): static
     {
         $this->is_expenses_intracommunity_tax_rate = $is_expenses_intracommunity_tax_rate;
 
