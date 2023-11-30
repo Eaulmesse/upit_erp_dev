@@ -34,6 +34,9 @@ class TaxRates
     #[ORM\Column]
     private ?bool $is_expenses_intracommunity_tax_rate = null;
 
+    #[ORM\ManyToOne(inversedBy: 'tax_rates')]
+    private ?InvoiceLines $invoiceLines = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -126,6 +129,18 @@ class TaxRates
     public function setIsExpensesIntracommunityTaxRate(?bool $is_expenses_intracommunity_tax_rate): static
     {
         $this->is_expenses_intracommunity_tax_rate = $is_expenses_intracommunity_tax_rate;
+
+        return $this;
+    }
+
+    public function getInvoiceLines(): ?InvoiceLines
+    {
+        return $this->invoiceLines;
+    }
+
+    public function setInvoiceLines(?InvoiceLines $invoiceLines): static
+    {
+        $this->invoiceLines = $invoiceLines;
 
         return $this;
     }

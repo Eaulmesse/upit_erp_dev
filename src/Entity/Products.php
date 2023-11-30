@@ -69,9 +69,13 @@ class Products
     #[ORM\OneToMany(mappedBy: 'products', targetEntity: QuotationLines::class)]
     private Collection $quotation_lines;
 
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: InvoiceLines::class)]
+    private Collection $invoiceLines;
+
     public function __construct()
     {
         $this->quotation_lines = new ArrayCollection();
+        $this->invoiceLines = new ArrayCollection();
     }
 
     
@@ -319,6 +323,36 @@ class Products
             // set the owning side to null (unless already changed)
             if ($quotationLine->getProducts() === $this) {
                 $quotationLine->setProducts(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InvoiceLines>
+     */
+    public function getInvoiceLines(): Collection
+    {
+        return $this->invoiceLines;
+    }
+
+    public function addInvoiceLine(InvoiceLines $invoiceLine): static
+    {
+        if (!$this->invoiceLines->contains($invoiceLine)) {
+            $this->invoiceLines->add($invoiceLine);
+            $invoiceLine->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInvoiceLine(InvoiceLines $invoiceLine): static
+    {
+        if ($this->invoiceLines->removeElement($invoiceLine)) {
+            // set the owning side to null (unless already changed)
+            if ($invoiceLine->getProduct() === $this) {
+                $invoiceLine->setProduct(null);
             }
         }
 
