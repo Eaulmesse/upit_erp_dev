@@ -12,14 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
 class InvoiceLines
 {
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'invoiceLines')]
     private ?Products $product = null;
-
-    #[ORM\OneToMany(mappedBy: 'invoiceLines', targetEntity: TaxRates::class)]
-    private Collection $tax_rates;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $details = null;
@@ -48,9 +46,15 @@ class InvoiceLines
     #[ORM\Column(nullable: true)]
     private ?float $unit_job_costing = null;
 
+    #[ORM\ManyToOne(inversedBy: 'invoiceLines')]
+    private ?TaxRates $tax_rates = null;
+
+    #[ORM\ManyToOne(inversedBy: 'invoiceLines')]
+    private ?Invoices $invoice = null;
+
     public function __construct()
     {
-        $this->tax_rates = new ArrayCollection();
+        
     }
 
     public function getId(): ?int
@@ -70,35 +74,7 @@ class InvoiceLines
         return $this;
     }
 
-    /**
-     * @return Collection<int, TaxRates>
-     */
-    public function getTaxRates(): Collection
-    {
-        return $this->tax_rates;
-    }
-
-    public function addTaxRate(TaxRates $taxRate): static
-    {
-        if (!$this->tax_rates->contains($taxRate)) {
-            $this->tax_rates->add($taxRate);
-            $taxRate->setInvoiceLines($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTaxRate(TaxRates $taxRate): static
-    {
-        if ($this->tax_rates->removeElement($taxRate)) {
-            // set the owning side to null (unless already changed)
-            if ($taxRate->getInvoiceLines() === $this) {
-                $taxRate->setInvoiceLines(null);
-            }
-        }
-
-        return $this;
-    }
+    
 
     public function getDetails(): ?string
     {
@@ -204,6 +180,30 @@ class InvoiceLines
     public function setUnitJobCosting(?float $unit_job_costing): static
     {
         $this->unit_job_costing = $unit_job_costing;
+
+        return $this;
+    }
+
+    public function getTaxRates(): ?TaxRates
+    {
+        return $this->tax_rates;
+    }
+
+    public function setTaxRates(?TaxRates $tax_rates): static
+    {
+        $this->tax_rates = $tax_rates;
+
+        return $this;
+    }
+
+    public function getInvoice(): ?Invoices
+    {
+        return $this->invoice;
+    }
+
+    public function setInvoice(?Invoices $invoice): static
+    {
+        $this->invoice = $invoice;
 
         return $this;
     }

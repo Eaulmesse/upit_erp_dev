@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TaxRatesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -34,8 +36,14 @@ class TaxRates
     #[ORM\Column]
     private ?bool $is_expenses_intracommunity_tax_rate = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tax_rates')]
-    private ?InvoiceLines $invoiceLines = null;
+    #[ORM\OneToMany(mappedBy: 'tax_rates', targetEntity: InvoiceLines::class)]
+    private Collection $invoiceLines;
+
+    public function __construct()
+    {
+        $this->invoiceLines = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -133,15 +141,35 @@ class TaxRates
         return $this;
     }
 
-    public function getInvoiceLines(): ?InvoiceLines
+    /**
+     * @return Collection<int, InvoiceLines>
+     */
+    public function getInvoiceLines(): Collection
     {
         return $this->invoiceLines;
     }
 
-    public function setInvoiceLines(?InvoiceLines $invoiceLines): static
+    public function addInvoiceLine(InvoiceLines $invoiceLine): static
     {
-        $this->invoiceLines = $invoiceLines;
+        if (!$this->invoiceLines->contains($invoiceLine)) {
+            $this->invoiceLines->add($invoiceLine);
+            $invoiceLine->setTaxRates($this);
+        }
 
         return $this;
     }
+
+    public function removeInvoiceLine(InvoiceLines $invoiceLine): static
+    {
+        if ($this->invoiceLines->removeElement($invoiceLine)) {
+            // set the owning side to null (unless already changed)
+            if ($invoiceLine->getTaxRates() === $this) {
+                $invoiceLine->setTaxRates(null);
+            }
+        }
+
+        return $this;
+    }
+
+    
 }
