@@ -62,8 +62,9 @@ class ExpensesApiService
             $expenseLines = $expensesData['expense_lines'];
 
             
-            $expenseLinesApiService->getData($session, $em, $expensesData, $expenseLines, $expenseLinesRepository, $expensesRepository);
+            
             $em->persist($this->expensesToDatabase($expensesData, $em, $suppliersRepository,  $companiesRepository, $workforcesRepository, $payslipsRepository, $projectsRepository, $supplierContractRepository));
+            $expenseLinesApiService->getData($session, $em, $expensesData, $expenseLines, $expenseLinesRepository, $expensesRepository);
         }
 
         // Suppression des entités qui ne sont plus présentes dans les nouvelles données
