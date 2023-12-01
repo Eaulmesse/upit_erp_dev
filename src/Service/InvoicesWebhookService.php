@@ -60,11 +60,11 @@ class InvoicesWebhookService
 
     public function mapToDatabase($webhookData, EntityManagerInterface $em, ?Invoices $invoices = null): Invoices 
     {
-       
+        $this->logger->info('Webhook Invoices received!', $webhookData);
         $invoices = new Invoices();
 
-        $invoices->setId($invoices['data']['id']);
-
+        $invoices->setId($webhookData['data']['id']);
+        
         $invoices->setNumber($webhookData['data']['number']);
         $invoices->setOrderNumber($webhookData['data']['order_number']);
 
