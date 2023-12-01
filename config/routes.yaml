@@ -23,45 +23,7 @@ webhook_quotations_get:
     path: '/webhook/quotations'
     controller: 'App\Controller\ProductsController::getWebhookQuotations'
 
-# USERS ROUTE
-app_get_users:
-    path: '/users/get'
-    controller: 'App\Controller\UsersController::callAPI'
 
-# WORKFORCES ROUTE
-app_get_workforces:
-    path: '/workforces/get'
-    controller: 'App\Controller\WorkforcesController::callAPI'
-
-# PAYSLIPS ROUTE
-app_get_payslips:
-    path: '/payslips/get'
-    controller: 'App\Controller\PayslipsController::callAPI'
-
-# EXPENSES ROUTE
-app_get_expenses:
-    path: '/expenses/get'
-    controller: 'App\Controller\ExpensesController::callAPI'
-
-# SUPPLIERS ROUTE
-app_get_suppliers:
-    path: '/suppliers/get'
-    controller: 'App\Controller\SuppliersController::callAPI'
-
-# SUPPLIERS CONTRACT ROUTE
-app_get_supplier-contracts:
-    path: '/suppliers-contract/get'
-    controller: 'App\Controller\SupplierContractController::callAPI'
-
-# PROJECT NATURE ROUTE
-app_get_projectNatures:
-    path: '/projectNatures/get'
-    controller: 'App\Controller\ProjectNaturesController::callAPI'
-
-# API ROUTE
-app_api_get:
-    path: '/api/get/{object}'
-    controller: 'App\Controller\ApiController::processApiRequest'
 
 # CALL API ROUTE
 app_call_companies_api:

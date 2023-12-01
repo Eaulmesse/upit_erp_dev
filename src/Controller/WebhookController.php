@@ -21,6 +21,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\SupplierContractRepository;
 use App\Service\ExpensesWebhookService;
+use App\Service\InvoicesWebhookService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -56,6 +57,14 @@ class WebhookController extends AbstractController
     public function callWebhookExpenses(Request $request, SessionInterface $session, EntityManagerInterface $em, SuppliersRepository $supplierRepository, SupplierContractRepository $supplierContractRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectRepository $projectRepository, ExpensesWebhookService $expensesWebhookService): Response
     {
         $data = $expensesWebhookService->getWebhookExpenses($request, $session, $em, $supplierRepository, $supplierContractRepository, $companiesRepository, $workforcesRepository, $payslipsRepository, $projectRepository);
+
+        return $data;
+    }
+
+    #[Route('/webhook/invoices', name: 'app_invoices_employees')]
+    public function callWebhookInvoices(Request $request, SessionInterface $session, EntityManagerInterface $em, InvoicesWebhookService $invoicesWebhookService): Response
+    {
+        $data = $invoicesWebhookService->getWebhookInvoices($request, $session, $em);
 
         return $data;
     }

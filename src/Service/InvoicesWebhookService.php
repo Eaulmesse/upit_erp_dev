@@ -60,13 +60,58 @@ class InvoicesWebhookService
 
     public function mapToDatabase($webhookData, EntityManagerInterface $em, ?Invoices $invoices = null): Invoices 
     {
-        $invoicesId = $webhookData['id'];
-        $invoices = $em->getRepository(Companies::class)->find($invoicesId);
+       
+        $invoices = new Invoices();
 
-        if ($invoices === null) {
-            $invoices = new Companies();
-            $invoices->setId($invoicesId);
+        $invoices->setId($invoices['data']['id']);
+
+        $invoices->setNumber($webhookData['data']['number']);
+        $invoices->setOrderNumber($webhookData['data']['order_number']);
+
+        if($webhookData['data']['date']) {
+            $invoices->setDate(new \DateTime($webhookData['data']['date']));
         }
+
+        if($webhookData['data']['sent_date']) {
+            $invoices->setSentDate(new \DateTime($webhookData['data']['sent_date']));
+        }
+        
+        if($webhookData['data']['due_date']) {
+            $invoices->setDueDate(new \DateTime($webhookData['data']['due_date']));
+        }
+        
+        if($webhookData['data']['paid_date']) {
+            $invoices->setPaidDate(new \DateTime($webhookData['data']['paid_date']));
+        }
+        
+        if($webhookData['data']['delivery_date']) {
+            $invoices->setDeliveryDate(new \DateTime($webhookData['data']['delivery_date']));
+        }
+        
+        if($webhookData['data']['last_update_date']) {
+            $invoices->setLastUpdateDate(new \DateTime($webhookData['data']['last_update_date']));
+        }
+        
+        $invoices->setPreTaxAmount($webhookData['data']['pre_tax_amount']);
+        $invoices->setTaxAmount($webhookData['data']['tax_amount']);
+        $invoices->setTotal($webhookData['data']['total']);
+        $invoices->setDepositPercent($webhookData['data']['deposits']['deposit_percent']);
+        $invoices->setDiscountsAmount($webhookData['data']['discounts']['amount']);
+        $invoices->setDiscountsAmountWithTax($webhookData['data']['discounts']['amount_with_tax']);
+        $invoices->setDiscountsComments($webhookData['data']['discounts']['comments']);
+        $invoices->setTaxesRate($webhookData['data']['taxes'][0]['rate']);
+        $invoices->setCurrency($webhookData['data']['currency']);
+        $invoices->setMargin($webhookData['data']['margin']);
+        $invoices->setMandatoryMentions($webhookData['data']['mandatory_mentions']);
+        $invoices->setPaymentMentions($webhookData['data']['payment_terms']);
+        $invoices->setThemeId($webhookData['data']['theme_id']);
+        $invoices->setOutstandingAmount($webhookData['data']['outstanding_amount']);
+        $invoices->setFrequencyInMonths($webhookData['data']['frequency_in_months']);
+        $invoices->setBusinessUser($webhookData['data']['business_user']);
+        $invoices->setPublicPath($webhookData['data']['public_path']);
+        $invoices->setPaidInvoicePdf($webhookData['data']['paid_invoice_pdf']);
+        $invoices->setCustomerPortalUrl($webhookData['data']['customer_portal_url']);
+        
         
 
 
