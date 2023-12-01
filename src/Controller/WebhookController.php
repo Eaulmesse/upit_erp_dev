@@ -20,9 +20,11 @@ use App\Service\ContractsWebhookService;
 use App\Service\EmployeesWebhookService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\OpportunitiesRepository;
+use App\Repository\ProductsRepository;
 use App\Service\OpportunitiesWebhookService;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\SupplierContractRepository;
+use App\Service\ProductsWebhookService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -66,6 +68,14 @@ class WebhookController extends AbstractController
     public function callWebhookOpportunities(Request $request, SessionInterface $session, EntityManagerInterface $em, OpportunitiesWebhookService $opportunitiesWebhookService, LoggerInterface $logger, OpportunitiesRepository $opportunitiesRepository,CompaniesRepository $companiesRepository, EmployeesRepository $employeesRepository): Response
     {
         $data = $opportunitiesWebhookService->getWebhookOpportunities($request, $session, $logger, $em, $opportunitiesRepository, $companiesRepository, $employeesRepository);
+
+        return $data;
+    }
+
+    #[Route('/webhook/products', name: 'app_products_employees')]
+    public function callWebhookProducts(Request $request, SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, ProductsWebhookService $productsWebhookService, ProductsRepository $productsRepository): Response
+    {
+        $data = $productsWebhookService->getWebhookProducts($request, $session, $logger, $em, $productsRepository);
 
         return $data;
     }
