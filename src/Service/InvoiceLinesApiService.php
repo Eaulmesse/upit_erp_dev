@@ -28,7 +28,7 @@ class InvoiceLinesApiService // Remplace ExpenseLinesApiService
     public function getData(SessionInterface $session, EntityManagerInterface $em, $invoicesData,  InvoiceLinesRepository $invoiceLinesRepository, InvoicesRepository $invoicesRepository, ProductsRepository $productsRepository, TaxRatesRepository $taxRatesRepository): Response
     {
         $session->set('expense_data', $invoicesData);
-
+        
         $this->dataCheck($session, $em, $invoiceLinesRepository, $invoicesRepository, $productsRepository, $taxRatesRepository);
 
         return new Response('Received!', Response::HTTP_OK);

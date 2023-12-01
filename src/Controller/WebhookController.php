@@ -5,23 +5,28 @@ namespace App\Controller;
 use Psr\Log\LoggerInterface;
 use App\Repository\UsersRepository;
 use App\Repository\ProjectRepository;
+use App\Repository\InvoicesRepository;
 use App\Repository\PayslipsRepository;
+use App\Repository\TaxRatesRepository;
 use App\Repository\AddressesRepository;
 use App\Repository\CompaniesRepository;
 use App\Repository\ContractsRepository;
 use App\Repository\EmployeesRepository;
 use App\Repository\SuppliersRepository;
+use App\Service\ExpensesWebhookService;
+use App\Service\InvoiceLinesApiService;
+use App\Service\InvoicesWebhookService;
 use App\Repository\QuotationsRepository;
 use App\Repository\WorkforcesRepository;
+use App\Repository\ProductsRepository;
 use App\Service\AddressesWebhookService;
 use App\Service\CompaniesWebhookService;
 use App\Service\ContractsWebhookService;
 use App\Service\EmployeesWebhookService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\InvoiceLinesRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\SupplierContractRepository;
-use App\Service\ExpensesWebhookService;
-use App\Service\InvoicesWebhookService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -62,9 +67,9 @@ class WebhookController extends AbstractController
     }
 
     #[Route('/webhook/invoices', name: 'app_invoices_employees')]
-    public function callWebhookInvoices(Request $request, SessionInterface $session, EntityManagerInterface $em, InvoicesWebhookService $invoicesWebhookService): Response
+    public function callWebhookInvoices(Request $request, SessionInterface $session, EntityManagerInterface $em, InvoicesWebhookService $invoicesWebhookService, InvoiceLinesApiService $invoiceLinesApiService, InvoiceLinesRepository $invoiceLinesRepository, InvoicesRepository $invoicesRepository,  ProductsRepository $productsRepository, TaxRatesRepository $taxRatesRepository): Response
     {
-        $data = $invoicesWebhookService->getWebhookInvoices($request, $session, $em);
+        $data = $invoicesWebhookService->getWebhookInvoices($request, $session, $em, $invoiceLinesApiService, $invoiceLinesRepository, $invoicesRepository, $productsRepository, $taxRatesRepository);
 
         return $data;
     }

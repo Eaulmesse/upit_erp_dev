@@ -2,14 +2,18 @@
 
 namespace App\Service;
 
+use App\Entity\Invoices;
 use App\Entity\Companies;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use App\Repository\ProductsRepository;
+use App\Repository\TaxRatesRepository;
+use App\Service\InvoiceLinesApiService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\InvoiceLinesRepository;
+use App\Repository\InvoicesRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Entity\Invoices;
-
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class InvoicesWebhookService
 {
@@ -20,7 +24,7 @@ class InvoicesWebhookService
         $this->logger = $webhookLogger;
     }
 
-    public function getWebhookInvoices(Request $request, SessionInterface $session, EntityManagerInterface $em): Response
+    public function getWebhookInvoices(Request $request, SessionInterface $session, EntityManagerInterface $em, InvoiceLinesApiService $invoiceLinesApiService, InvoiceLinesRepository $invoiceLinesRepository, InvoicesRepository $invoicesRepository,  ProductsRepository $productsRepository, TaxRatesRepository $taxRatesRepository): Response
     {
         $response = json_decode($request->getContent(), true);
 
@@ -34,7 +38,8 @@ class InvoicesWebhookService
         $this->logger->info('Webhook Invoices received!', $response);
 
         $this->creatingInvoices($session, $em);
-
+        $invoicesData = $response['data'];
+        $invoiceLinesApiService->getData($session, $em, $invoicesData, $invoiceLinesRepository, $invoicesRepository, $productsRepository, $taxRatesRepository);
         return new Response('Received!', Response::HTTP_OK);
     }
 
