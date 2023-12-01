@@ -121,24 +121,3 @@ class CompaniesWebhookService
         return new Response('Done!', Response::HTTP_OK);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

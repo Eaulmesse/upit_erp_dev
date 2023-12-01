@@ -11,6 +11,7 @@ use App\Repository\CompaniesRepository;
 use App\Repository\ContractsRepository;
 use App\Repository\EmployeesRepository;
 use App\Repository\SuppliersRepository;
+use App\Service\ExpensesWebhookService;
 use App\Repository\QuotationsRepository;
 use App\Repository\WorkforcesRepository;
 use App\Service\AddressesWebhookService;
@@ -18,9 +19,10 @@ use App\Service\CompaniesWebhookService;
 use App\Service\ContractsWebhookService;
 use App\Service\EmployeesWebhookService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\OpportunitiesRepository;
+use App\Service\OpportunitiesWebhookService;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\SupplierContractRepository;
-use App\Service\ExpensesWebhookService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -56,6 +58,14 @@ class WebhookController extends AbstractController
     public function callWebhookExpenses(Request $request, SessionInterface $session, EntityManagerInterface $em, SuppliersRepository $supplierRepository, SupplierContractRepository $supplierContractRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectRepository $projectRepository, ExpensesWebhookService $expensesWebhookService): Response
     {
         $data = $expensesWebhookService->getWebhookExpenses($request, $session, $em, $supplierRepository, $supplierContractRepository, $companiesRepository, $workforcesRepository, $payslipsRepository, $projectRepository);
+
+        return $data;
+    }
+
+    #[Route('/webhook/opportunities', name: 'app_opportunities_employees')]
+    public function callWebhookOpportunities(Request $request, SessionInterface $session, EntityManagerInterface $em, OpportunitiesWebhookService $opportunitiesWebhookService, LoggerInterface $logger, OpportunitiesRepository $opportunitiesRepository,CompaniesRepository $companiesRepository, EmployeesRepository $employeesRepository): Response
+    {
+        $data = $opportunitiesWebhookService->getWebhookOpportunities($request, $session, $logger, $em, $opportunitiesRepository, $companiesRepository, $employeesRepository);
 
         return $data;
     }
