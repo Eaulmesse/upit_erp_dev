@@ -85,7 +85,7 @@ class Projects
     public function __construct()
     {
         
-        $this->workforces = new ArrayCollection();
+        // $this->workforces = new ArrayCollection();
         $this->expenses = new ArrayCollection();
         $this->quotations = new ArrayCollection();
     }

@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Expenses;
 use App\Repository\CompaniesRepository;
 use App\Repository\PayslipsRepository;
-use App\Repository\ProjectRepository;
+use App\Repository\ProjectsRepository;
 use App\Repository\SupplierContractRepository;
 use App\Repository\SuppliersRepository;
 use App\Repository\WorkforcesRepository;
@@ -25,7 +25,7 @@ class ExpensesWebhookService
         $this->logger = $webhookLogger;
     }
 
-    public function getWebhookExpenses(Request $request, SessionInterface $session, EntityManagerInterface $em, SuppliersRepository $supplierRepository, SupplierContractRepository $supplierContractRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectRepository $projectRepository): Response
+    public function getWebhookExpenses(Request $request, SessionInterface $session, EntityManagerInterface $em, SuppliersRepository $supplierRepository, SupplierContractRepository $supplierContractRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectsRepository $projectRepository): Response
     {
         $response = json_decode($request->getContent(), true);
 
@@ -43,7 +43,7 @@ class ExpensesWebhookService
         return new Response('Received!', Response::HTTP_OK);
     }
 
-    public function creatingExpenses(SessionInterface $session, EntityManagerInterface $em, SuppliersRepository $supplierRepository, SupplierContractRepository $supplierContractRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectRepository $projectRepository): Response
+    public function creatingExpenses(SessionInterface $session, EntityManagerInterface $em, SuppliersRepository $supplierRepository, SupplierContractRepository $supplierContractRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectsRepository $projectRepository): Response
     {
         $webhookData = $session->get('webhook_data');
 
@@ -97,7 +97,7 @@ class ExpensesWebhookService
         return new Response('Done!', Response::HTTP_OK);
     }
 
-    public function mapToDatabase($webhookData, EntityManagerInterface $em, SuppliersRepository $supplierRepository, SupplierContractRepository $supplierContractRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectRepository $projectRepository, ?Expenses $expenses = null): Expenses 
+    public function mapToDatabase($webhookData, EntityManagerInterface $em, SuppliersRepository $supplierRepository, SupplierContractRepository $supplierContractRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectsRepository $projectRepository, ?Expenses $expenses = null): Expenses 
     {
         $expensesId = $webhookData['id'];
         $expenses = $em->getRepository(Companies::class)->find($expensesId);
@@ -178,7 +178,7 @@ class ExpensesWebhookService
         return $expenses;
     }
 
-    public function webhookExpensesFilter(SessionInterface $session, EntityManagerInterface $em, SuppliersRepository $supplierRepository, SupplierContractRepository $supplierContractRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectRepository $projectRepository): Response 
+    public function webhookExpensesFilter(SessionInterface $session, EntityManagerInterface $em, SuppliersRepository $supplierRepository, SupplierContractRepository $supplierContractRepository, CompaniesRepository $companiesRepository, WorkforcesRepository $workforcesRepository, PayslipsRepository $payslipsRepository, ProjectsRepository $projectRepository): Response 
     {
         $webhookData = $session->get('webhook_data');
         

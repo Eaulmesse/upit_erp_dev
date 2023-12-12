@@ -47,7 +47,9 @@ class QuotationLinesApiService // Remplacement de ExpenseLinesApiService par Quo
     private function quotationLinesToDatabase($quotationData, EntityManagerInterface $em, QuotationsRepository $quotationsRepository, ProductsRepository $productsRepository, ?QuotationLines $quotationLines = null): void
     {
         $quotationLinesData = $quotationData["quotation_lines"];
+        $this->logger->info('quotationData', $quotationData);
         foreach ($quotationLinesData as $lines) {
+            
             $quotationLines = new QuotationLines(); 
 
             $quotationLines->setQuotationsId($quotationsRepository->find($quotationData['id']));

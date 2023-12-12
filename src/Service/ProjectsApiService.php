@@ -84,10 +84,14 @@ class ProjectsApiService // Remplacement de ContractsApiService par ProjectsApiS
             $projects->setId($projectsId);
         }
 
-        $projects->setId($projectsData['id']);
         $projects->setName($projectsData['name']);
         $projects->setnumber($projectsData['number']);
-        $projects->setCompany($companyRepository->find($projectsData['company_id']));
+        if ($projectsData['company_id'] != null) {
+            $projects->setCompany($companyRepository->find($projectsData['company_id']));
+        } else {
+            $projects->setCompany(null);
+        }
+        
         $projects->setComments($projectsData['comments']);
         $projects->setEstimatedHours($projectsData['estimated_hours']);
         $projects->setEstimatedCost($projectsData['estimated_cost']);
@@ -113,7 +117,12 @@ class ProjectsApiService // Remplacement de ContractsApiService par ProjectsApiS
 
         }
 
-        $projects->setStatuses($statusesRepository->find($projectsData['statuses']['id']));
+        if ($projectsData['statuses'] != null) {
+            $projects->setStatuses($statusesRepository->find($projectsData['statuses']['id']));
+        } else {
+            $projects->setStatuses(null);
+        }
+        
 
         return $projects;
     }

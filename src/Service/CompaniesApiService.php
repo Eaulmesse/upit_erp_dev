@@ -25,7 +25,7 @@ class CompaniesApiService
     public function callAPI(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, CompaniesRepository $companiesRepository): Response
     {
  
-        $page = 1;
+        $page = 2;
         // $limit = 500; 
 
         $response = $this->client->request(
