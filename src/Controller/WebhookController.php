@@ -5,10 +5,12 @@ namespace App\Controller;
 use Psr\Log\LoggerInterface;
 use App\Repository\UsersRepository;
 use App\Repository\ProjectRepository;
+use App\Repository\InvoicesRepository;
 use App\Repository\PayslipsRepository;
 use App\Repository\ProductsRepository;
 use App\Repository\ProjectsRepository;
 use App\Repository\StatusesRepository;
+use App\Repository\TaxRatesRepository;
 use App\Service\ProjectWebhookService;
 use App\Repository\AddressesRepository;
 use App\Repository\CompaniesRepository;
@@ -16,6 +18,8 @@ use App\Repository\ContractsRepository;
 use App\Repository\EmployeesRepository;
 use App\Repository\SuppliersRepository;
 use App\Service\ExpensesWebhookService;
+use App\Service\InvoiceLinesApiService;
+use App\Service\InvoicesWebhookService;
 use App\Service\ProductsWebhookService;
 use App\Repository\QuotationsRepository;
 use App\Repository\WorkforcesRepository;
@@ -26,6 +30,7 @@ use App\Service\EmployeesWebhookService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\QuotationLinesApiService;
 use App\Service\QuotationsWebhookService;
+use App\Repository\InvoiceLinesRepository;
 use App\Repository\OpportunitiesRepository;
 use App\Repository\ProjectNaturesRepository;
 use App\Repository\QuotationLinesRepository;
@@ -99,6 +104,15 @@ class WebhookController extends AbstractController
     public function callWebhookQuotations(QuotationsWebhookService $quotationsWebhookService, Request $request, SessionInterface $session,  LoggerInterface $logger, EntityManagerInterface $em, UsersRepository $usersRepository, CompaniesRepository $companiesRepository, ProjectsRepository $projectsRepository, ContractsRepository $contractsRepository, OpportunitiesRepository $opportunitiesRepository, QuotationsRepository $quotationsRepository, QuotationLinesApiService $quotationLinesApiService, QuotationLinesRepository $quotationLinesRepository, ProductsRepository $productsRepository): Response
     {
         $data = $quotationsWebhookService->getWebhookQuotations($request, $session, $logger, $em, $usersRepository, $companiesRepository, $projectsRepository, $contractsRepository, $opportunitiesRepository, $quotationsRepository, $quotationLinesApiService, $quotationLinesRepository, $productsRepository);
+
+        return $data;
+    }
+
+    #[Route('/webhook/invoices', name: 'app_webhook_invoices')]
+    public function callWebhookInvoices(InvoicesWebhookService $invoicesWebhookService, Request $request, SessionInterface $session, EntityManagerInterface $em, ContractsRepository $contractsRepository, InvoiceLinesApiService $invoiceLinesApiService, InvoiceLinesRepository $invoiceLinesRepository, InvoicesRepository $invoicesRepository, ProductsRepository $productsRepository, TaxRatesRepository $taxRatesRepository): Response
+    {
+        $data = $invoicesWebhookService->getWebhookInvoices($request, $session, $em, $contractsRepository, $invoiceLinesApiService, $invoiceLinesRepository, $invoicesRepository, $productsRepository,
+        $taxRatesRepository);
 
         return $data;
     }

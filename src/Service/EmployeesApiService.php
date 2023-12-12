@@ -83,7 +83,6 @@ class EmployeesApiService
             $employees->setId($employyesId);
         }
 
-        $employees->setId($employeesData["id"]);
         $employees->setGender($employeesData["gender"]);
         $employees->setFirstname($employeesData["firstname"]);
         $employees->setLastname($employeesData["lastname"]);
