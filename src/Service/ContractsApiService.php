@@ -116,28 +116,6 @@ class ContractsApiService // Remplacement de SuppliersApiService par ContractsAp
             $contracts->setLastUpdateDate($lastUpdateDate);
         }
 
-        $invoiceAddresse = $addressesRepository->findOneBy([
-            'company' => $contractsData["company"]["id"],
-            'is_for_invoice' => 'true'
-        ]);
-
-        if($invoiceAddresse !== null)
-        {
-            $contracts->setInvoiceAddressStreet($invoiceAddresse->getAddressStreet());
-            $contracts->setInvoiceAddressCity($invoiceAddresse->getAddressCity());
-        }
-        
-        $deliveryAddresse = $addressesRepository->findOneBy([
-            'company' =>  $contractsData["company"]["id"],
-            'is_for_delivery' => 'true'
-        ]);
-
-        if($deliveryAddresse !== null)
-        {
-            $contracts->setDeliveryAddressStreet($deliveryAddresse->getAddressStreet());
-            $contracts->setDeliveryAddressCity($deliveryAddresse->getAddressCity());
-        }
-
         $firstInvoicePlannedDate = new \DateTime($contractsData["first_invoice_planned_date"]);
         if($firstInvoicePlannedDate !== null) {
             $contracts->setFirstInvoicePlannedDate($firstInvoicePlannedDate);

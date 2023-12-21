@@ -13,7 +13,7 @@ class Contracts
 {
     #[ORM\Id]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id = null; 
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $name = null;
@@ -59,8 +59,6 @@ class Contracts
 
     public function __construct()
     {
-        // $this->project = new ArrayCollection();
-        
         $this->quotations = new ArrayCollection();
         $this->invoices = new ArrayCollection();
     }
@@ -87,7 +85,7 @@ class Contracts
         $this->name = $name;
 
         return $this;
-    }
+    }   
 
     public function getStartDate(): ?\DateTimeInterface
     {
@@ -209,17 +207,7 @@ class Contracts
         return $this;
     }
 
-    // public function getProject(): ?string
-    // {
-    //     return $this->project;
-    // }
 
-    // public function setProject(?string $project): static
-    // {
-    //     $this->project = $project;
-
-    //     return $this;
-    // }
 
     
 
@@ -235,35 +223,6 @@ class Contracts
         return $this;
     }
 
-    /**
-     * @return Collection<int, Invoices>
-     */
-    // public function getProject(): Collection
-    // {
-    //     return $this->project;
-    // }
-
-    // public function addProject(Invoices $project): static
-    // {
-    //     if (!$this->project->contains($project)) {
-    //         $this->project->add($project);
-    //         $project->setContract($this);
-    //     }
-
-    //     return $this;
-    // }
-
-    // public function removeProject(Invoices $project): static
-    // {
-    //     if ($this->project->removeElement($project)) {
-    //         // set the owning side to null (unless already changed)
-    //         if ($project->getContract() === $this) {
-    //             $project->setContract(null);
-    //         }
-    //     }
-
-    //     return $this;
-    // }
 
     /**
      * @return Collection<int, Quotations>

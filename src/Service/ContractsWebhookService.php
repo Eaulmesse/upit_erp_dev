@@ -43,7 +43,7 @@ class ContractsWebhookService
 
         $session->set('webhook_data', $response);
         
-        $this->logger->info('Webhook Employees received!', $response);
+        $this->logger->info('Webhook Contracts received!', $response);
 
         $this->webhookContractsFilter($session, $em, $logger, $contractsRepository, $usersRepository, $companyRepository, $addressesRepository, $quotationsRepository);
 
@@ -116,27 +116,6 @@ class ContractsWebhookService
             $contract->setLastUpdateDate($lastUpdateDate);
         }  
 
-        $invoiceAddresse = $addressesRepository->findOneBy([
-            'company_id' => ["data"]["company"]["id"],
-            'is_for_invoice' => 'true'
-        ]);
-
-        if($invoiceAddresse !== null)
-        {
-            $contract->setInvoiceAddressStreet($invoiceAddresse->getAddressStreet());
-            $contract->setInvoiceAddressCity($invoiceAddresse->getAddressCity());
-        }
-
-        $deliveryAddresse = $addressesRepository->findOneBy([
-            'company_id' => ["data"]["company"]["id"],
-            'is_for_delivery' => 'true'
-        ]);
-
-        if($deliveryAddresse !== null)
-        {
-            $contract->setDeliveryAddressStreet($deliveryAddresse->getAddressStreet());
-            $contract->setDeliveryAddressCity($deliveryAddresse->getAddressCity());
-        }
 
         $firstInvoicePlannedDate = new \DateTime($webhookData['data']["first_invoice_planned_date"]);
         if($firstInvoicePlannedDate !== null) {
@@ -149,7 +128,7 @@ class ContractsWebhookService
         $contract->setGenerateAndSendRecurringInvoices($webhookData["data"]["generate_and_send_recurring_invoices"]);
         $contract->setInvoiceFrenquencyInMonths($webhookData["data"]["invoice_frequency_in_months"]);
         $contract->setPreauthorizedDebit($webhookData["data"]["preauthorized_debit"]);
-        $contract->setCompany($companyRepository->find(['data']['company']['id']));
+        $contract->setCompany($companyRepository->find($webhookData['data']['company']['id']));
         $contract->setGenerateAndSendRecurringInvoices($webhookData["data"]["generate_and_send_recurring_invoices"]);
 
     }

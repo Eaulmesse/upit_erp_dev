@@ -52,7 +52,7 @@ class WebhookController extends AbstractController
         return $data;
     }
 
-    #[Route('/webhook/contracts', name: 'app_webhook_employees')]
+    #[Route('/webhook/contracts', name: 'app_webhook_contracts')]
     public function callWebhookContracts(Request $request, SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, ContractsRepository $contractsRepository, UsersRepository $usersRepository, CompaniesRepository $companiesRepository, AddressesRepository $addressesRepository, QuotationsRepository $quotationsRepository, ContractsWebhookService $contractsWebhookService): Response
     {
         $data = $contractsWebhookService->getWebhookContracts($request, $session, $em, $logger, $contractsRepository, $usersRepository, $companiesRepository, $addressesRepository, $quotationsRepository);
