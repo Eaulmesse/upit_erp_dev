@@ -8,8 +8,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-use App\Entity\Companies;
-
 use App\Repository\CompaniesRepository;
 use App\Repository\AddressesRepository;
 

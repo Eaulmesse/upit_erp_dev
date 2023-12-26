@@ -27,7 +27,7 @@ class CompaniesWebhookService
         $this->client = $client;
     }
 
-    public function getWebhookCompanies(Request $request, SessionInterface $session,  LoggerInterface $logger, EntityManagerInterface $em, CompaniesRepository $companiesRepository, AddressesRepository $addressesRepository, AddressesWebhookService $addressesWebhookService): Response
+    public function getWebhookCompanies(Request $request, SessionInterface $session,  LoggerInterface $logger, EntityManagerInterface $em, CompaniesRepository $companiesRepository, AddressesRepository $addressesRepository, AddressesWebhookService $addressesWebhookService, AddressesGrenkeService $addressesGrenkeService): Response
 {
         $response = json_decode($request->getContent(), true);
 
@@ -41,7 +41,7 @@ class CompaniesWebhookService
 
         $this->webhookCompaniesFilter($session, $em, $addressesRepository, $companiesRepository);
 
-        $addressesWebhookService->getWebhookAddresses($response, $session, $logger, $em, $addressesRepository, $companiesRepository);
+        $addressesWebhookService->getWebhookAddresses($response, $session, $logger, $em, $addressesRepository, $companiesRepository, $addressesGrenkeService);
         
         return new Response('Done!', Response::HTTP_OK);
     }

@@ -3,13 +3,14 @@ namespace App\Service;
 
 use App\Entity\Addresses;
 use Psr\Log\LoggerInterface;
+use App\Repository\AddressesRepository;
+use App\Repository\CompaniesRepository;
 use Doctrine\ORM\EntityManagerInterface;
+
+
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-
-use App\Repository\CompaniesRepository;
-use App\Repository\AddressesRepository;
 
 class AddressesWebhookService
 {
@@ -23,12 +24,12 @@ class AddressesWebhookService
     }
 
     
-    public function getWebhookAddresses($response, SessionInterface $session, LoggerInterface $logger, EntityManagerInterface $em, AddressesRepository $addressesRepository, CompaniesRepository $companiesRepository): Response
+    public function getWebhookAddresses($response, SessionInterface $session, LoggerInterface $logger, EntityManagerInterface $em, AddressesRepository $addressesRepository, CompaniesRepository $companiesRepository, AddressesGrenkeService $addressesGrenkeService): Response
     {
     
         $session->set('company_data', $response);
         $this->logger->INFO('ADDRESSES: ', $response);
-        $this->AddressesToDatabase($response, $addressesRepository, $logger, $session, $em, $companiesRepository );
+        $this->AddressesToDatabase($response, $addressesRepository, $logger, $session, $em, $companiesRepository, $addressesGrenkeService );
         return new Response('Received!', Response::HTTP_OK);
     }
 
@@ -47,14 +48,22 @@ class AddressesWebhookService
         return $response->ToArray();
     }
 
-    public function AddressesToDatabase($response, AddressesRepository $addressesRepository, LoggerInterface $logger, SessionInterface $session, EntityManagerInterface $em, CompaniesRepository $companiesRepository): Response {
+    public function AddressesToDatabase($response, AddressesRepository $addressesRepository, LoggerInterface $logger, SessionInterface $session, EntityManagerInterface $em, CompaniesRepository $companiesRepository, AddressesGrenkeService $addressesGrenkeService): Response {
         
         $dataAPI = $this->FetchAddressesData($response, $addressesRepository, $logger, $session, $em);
 
         $currentAddresseIds = []; 
-        
+        $grenkeFound = false;
         foreach ($dataAPI as $addresseData) {
-            $this->logger->INFO(' Traitement', $addresseData);
+            $this->logger->INFO(' AddresseData', $addresseData);
+            $this->logger->INFO(' DataAPI', $dataAPI);
+
+
+            // GERER GRENKE
+            if($addresseData['address_street'] == "54 Rue Marcel Dassault") {
+                $grenkeFound = true;
+            }
+
             $addresseFromDb = $addressesRepository->find($addresseData["id"]);
             
     
@@ -70,6 +79,11 @@ class AddressesWebhookService
             $currentAddresseIds[] = $addresseFromDb->getId();
         }
         
+        if(!$grenkeFound) {
+            $addressesGrenkeService->getResponse($response, $companiesRepository, $em);
+        }
+
+
         // Suppression des adresses non présentes dans les données fraîches de l'API
         $allAddresses = $addressesRepository->find($addresseData['id']);
         foreach ($allAddresses as $addresse) {
@@ -121,5 +135,51 @@ class AddressesWebhookService
             $this->logger->error('Data saving error: ', ['error' => $e->getMessage()]);
         }
     }
+
+    // private function addGrenke($addresseData): void {
+    //     // Création du tableau associatif
+    //     $data = [
+    //         "name" => "Grenke",
+    //         "company_id" => $addresseData['data']['id'],
+    //         "contact_name" => $addresseData['data']['contact_name'],
+    //         "company_name" => $addresseData['data']['company_name'],
+    //         "address_street" => "54 Rue Marcel Dassault",
+    //         "address_zip_code" => "69740",
+    //         "address_city" => "Genas",
+    //         "address_country" => "France",
+    //         "is_for_invoice" => true,
+    //         "is_for_delivery" => false,
+    //         "is_for_quotation" => false
+    //     ];
+
+    //     // Conversion du tableau en JSON
+    //     $jsonData = json_encode($data);
+
+    //     // Création du client HTTP
+    //     $client = HttpClient::create();
+
+    //     // Configuration de la requête POST
+    //     $response = $client->request('POST', 'https://axonaut.com/api/v2/addresses', [
+    //         'headers' => [
+    //             'userApiKey' => $_ENV['API_KEY'],
+    //             'Content-Type' => 'application/json',
+    //         ],
+    //         'body' => $jsonData
+    //     ]);
+
+    //     $statusCode = $response->getStatusCode();
+
+    //     if ($statusCode == 200) {
+    //         // La requête a réussi
+    //         // $content = $response->getContent();
+    //         $this->logger->INFO('Code 200', $data);
+    //         // Faire quelque chose avec le contenu de la réponse
+    //     } else {
+    //         // Gérer les erreurs ou les statuts de réponse différents
+    //         // $error = $response->getContent(false);
+    //         $this->logger->INFO('ERROR POST', $data);
+    //         // Traiter l'erreur
+    //     }
+    // }
 
 }

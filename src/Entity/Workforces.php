@@ -54,15 +54,11 @@ class Workforces
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $thirdparty_code = null;
 
-    #[ORM\ManyToMany(targetEntity: Projects::class, mappedBy: 'workforces')]
-    private Collection $projects;
-
     #[ORM\OneToMany(mappedBy: 'workforce', targetEntity: Expenses::class)]
     private Collection $expenses;
 
     public function __construct()
     {
-        $this->projects = new ArrayCollection();
         $this->expenses = new ArrayCollection();
     }
 
@@ -230,34 +226,6 @@ class Workforces
     public function setThirdpartyCode(?string $thirdparty_code): static
     {
         $this->thirdparty_code = $thirdparty_code;
-
-        return $this;
-    }
-
-
-    /**
-     * @return Collection<int, Projects>
-     */
-    public function getProjects(): Collection
-    {
-        return $this->projects;
-    }
-
-    public function addProject(Projects $project): static
-    {
-        if (!$this->projects->contains($project)) {
-            $this->projects->add($project);
-            $project->addWorkforce($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProject(Projects $project): static
-    {
-        if ($this->projects->removeElement($project)) {
-            $project->removeWorkforce($this);
-        }
 
         return $this;
     }

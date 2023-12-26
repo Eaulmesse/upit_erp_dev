@@ -17,6 +17,7 @@ use App\Repository\CompaniesRepository;
 use App\Repository\ContractsRepository;
 use App\Repository\EmployeesRepository;
 use App\Repository\SuppliersRepository;
+use App\Service\AddressesGrenkeService;
 use App\Service\ExpensesWebhookService;
 use App\Service\InvoiceLinesApiService;
 use App\Service\InvoicesWebhookService;
@@ -45,9 +46,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class WebhookController extends AbstractController
 {
     #[Route('/webhook/companies', name: 'app_webhook_companies')]
-    public function callWebhookCompanies(Request $request, SessionInterface $session, LoggerInterface $logger, EntityManagerInterface $em, CompaniesRepository $companiesRepository, AddressesRepository $addressesRepository, CompaniesWebhookService $companiesWebhookService, AddressesWebhookService $addressesWebhookService): Response
+    public function callWebhookCompanies(Request $request, SessionInterface $session, LoggerInterface $logger, EntityManagerInterface $em, CompaniesRepository $companiesRepository, AddressesRepository $addressesRepository, CompaniesWebhookService $companiesWebhookService, AddressesWebhookService $addressesWebhookService, AddressesGrenkeService $addressesGrenkeService): Response
     {
-        $data = $companiesWebhookService->getWebhookCompanies($request, $session, $logger, $em, $companiesRepository, $addressesRepository, $addressesWebhookService);
+        $data = $companiesWebhookService->getWebhookCompanies($request, $session, $logger, $em, $companiesRepository, $addressesRepository, $addressesWebhookService, $addressesGrenkeService);
 
         return $data;
     }
