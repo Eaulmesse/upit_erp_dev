@@ -2,16 +2,16 @@
 namespace App\Service;
 
 use App\Entity\Addresses;
+use App\Entity\Companies;
 use Psr\Log\LoggerInterface;
+use App\Repository\AddressesRepository;
+use App\Repository\CompaniesRepository;
 use Doctrine\ORM\EntityManagerInterface;
+
+use Symfony\Component\HttpClient\HttpClient;
+
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-
-use App\Entity\Companies;
-
-use App\Repository\CompaniesRepository;
-use App\Repository\AddressesRepository;
 
 class AddressesApiService
 {
@@ -25,15 +25,17 @@ class AddressesApiService
     }
 
     
-    public function callAPI(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, AddressesRepository $addressesRepository, CompaniesRepository $companiesRepository): Response
+    public function callAPI(EntityManagerInterface $em, LoggerInterface $logger, AddressesRepository $addressesRepository, CompaniesRepository $companiesRepository): Response
     {
         $companies = $companiesRepository->findAll();
-
-        $limit = 10;// Limite de boucle
+        $companyId = null;
+        $start = 1;
+        $limit = $start + 25;
         $data = array();
-        for ($i = 0; $i < $limit; $i++) {
-            $company = $companies[$i];
-            $companyId = $company->getId();
+
+        for ($i = $start; $i < $limit; $i++) {
+
+            $companyId = $companies[$i]->getId();
 
             $response = $this->client->request(
                 'GET',
@@ -44,33 +46,39 @@ class AddressesApiService
                     ],
                 ]
             );
-
-            // $data = $response->toArray();
-            array_push($data, $response->toArray());
             
-
+            
+            $companyData = $response->toArray();
+            
+            array_push($data, $companyData);
             
         }
+
         foreach($data as $array) {
-            // print_r($array);
-            $session->set('api_data', $array);
-            $this->dataCheck($session, $em, $logger, $addressesRepository, $companiesRepository);
+            $this->dataCheck($array, $companyId,  $em, $logger, $addressesRepository, $companiesRepository);
         }
 
-        // dd($data);
-        
-    
-        
         return new Response('Received!', Response::HTTP_OK);
     }
 
-    public function dataCheck(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger, AddressesRepository $addressesRepository,  CompaniesRepository $companiesRepository): Response
+    public function dataCheck($array, $companyId, EntityManagerInterface $em, LoggerInterface $logger, AddressesRepository $addressesRepository,  CompaniesRepository $companiesRepository): Response
     {   
-        $data = $session->get('api_data');
+        
+        $companie = $companiesRepository->find($companyId);
+        $grenkeFound = false;
+        
+        foreach ($array as $addressesData) {
 
-        foreach ($data as $addressesData) {
             $addresses = $this->addressesToDatabase($addressesData, $companiesRepository, $em);
             $em->persist($addresses);
+
+            if($addressesData['address_street'] === "54 Rue Marcel Dassault"){
+                $grenkeFound = true;
+            }
+        }
+
+        if(!$grenkeFound) {
+            $grenkeAddress = $this->createGrenke($companie);
         }
 
         // Suppression des entités qui ne sont plus présentes dans les nouvelles données
@@ -92,8 +100,8 @@ class AddressesApiService
 
     private function addressesToDatabase($addressesData, CompaniesRepository $companiesRepository,  EntityManagerInterface $em, ?Addresses $addresses = null): Addresses
     {
-        // dd($addressesData);
         $addressesId = $addressesData['id'];
+        
         $addresses = $em->getRepository(Addresses::class)->find($addressesId);
 
         if ($addresses === null) {
@@ -116,12 +124,45 @@ class AddressesApiService
         $addresses->setIsForDelivery($addressesData['is_for_delivery']);
 
         $company = $companiesRepository->find($addressesData['company']['id']);
+        
         $addresses->setCompanyId($company);
+
         return $addresses;
     }
 
     private function saveAddresses(EntityManagerInterface $em): void
     {
         $em->flush();
+    }
+
+    public function createGrenke($companie): void {
+        print_r("Nouvelle adresse Grenke pour " . $companie->getName());
+
+        $data = [
+            "name" => "Grenke",
+            "company_id" => $companie->getId(),
+            "contact_name" => true,
+            "company_name" => $companie->getName(),
+            "address_street" => "54 Rue Marcel Dassault",
+            "address_zip_code" => "69740",
+            "address_city" => "Genas",
+            "address_country" => "France",
+            "is_for_invoice" => false,
+            "is_for_delivery" => false,
+            "is_for_quotation" => false
+        ];
+ 
+ 
+        $jsonData = json_encode($data);
+        $client = HttpClient::create();
+ 
+        $post = $client->request('POST', 'https://axonaut.com/api/v2/addresses', [
+            'headers' => [
+                'userApiKey' => $_ENV['API_KEY'],
+                'Content-Type' => 'application/json',
+            ],
+            'body' => $jsonData
+        ]);
+
     }
 }

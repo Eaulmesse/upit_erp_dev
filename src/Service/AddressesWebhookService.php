@@ -55,6 +55,16 @@ class AddressesWebhookService
         $currentAddresseIds = []; 
 
         $grenkeFound = false;
+
+        foreach ($dataAPI as $addresseData) {
+
+            if($addresseData['address_street'] === "54 Rue Marcel Dassault") {
+                $grenkeFound = true;
+                break;
+            }
+            
+        }
+
         
         foreach ($dataAPI as $addresseData) {
             $this->logger->INFO(' Traitement', $addresseData);
@@ -138,7 +148,7 @@ class AddressesWebhookService
     }
 
     public function postGrenke($response, SessionInterface $session, LoggerInterface $logger, EntityManagerInterface $em, AddressesRepository $addressesRepository, CompaniesRepository $companiesRepository): void {
- 
+        
         $data = [
             "name" => "Grenke",
             "company_id" => $response['data']['id'],
