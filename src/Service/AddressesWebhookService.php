@@ -3,13 +3,14 @@ namespace App\Service;
 
 use App\Entity\Addresses;
 use Psr\Log\LoggerInterface;
+use App\Repository\AddressesRepository;
+use App\Repository\CompaniesRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpClient\HttpClient;
+
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-
-use App\Repository\CompaniesRepository;
-use App\Repository\AddressesRepository;
 
 class AddressesWebhookService
 {
@@ -52,12 +53,24 @@ class AddressesWebhookService
         $dataAPI = $this->FetchAddressesData($response, $addressesRepository, $logger, $session, $em);
 
         $currentAddresseIds = []; 
+
+        $grenkeFound = false;
+
+        foreach ($dataAPI as $addresseData) {
+
+            if($addresseData['address_street'] === "54 Rue Marcel Dassault") {
+                $grenkeFound = true;
+                break;
+            }
+            
+        }
+
         
         foreach ($dataAPI as $addresseData) {
             $this->logger->INFO(' Traitement', $addresseData);
             $addresseFromDb = $addressesRepository->find($addresseData["id"]);
             
-    
+            
             // Si l'adresse existe déjà, la mettre à jour
             if ($addresseFromDb) {
                 $addresseFromDb = $this->mapToAddressesEntity($addresseData, $addresseFromDb, $companiesRepository);
@@ -68,6 +81,16 @@ class AddressesWebhookService
             }
     
             $currentAddresseIds[] = $addresseFromDb->getId();
+
+
+            if($addresseData['address_street'] === "54 Rue Marcel Dassault") {
+                $grenkeFound = true;
+                break;
+            }
+        }
+
+        if(!$grenkeFound) {
+            $this->postGrenke($response, $session, $logger, $em, $addressesRepository, $companiesRepository);
         }
         
         // Suppression des adresses non présentes dans les données fraîches de l'API
@@ -113,6 +136,8 @@ class AddressesWebhookService
         
         return $existingAddress;
     }
+
+
     
     private function saveEntities(EntityManagerInterface $em): void {
         try {
@@ -120,6 +145,43 @@ class AddressesWebhookService
         } catch (\Exception $e) {
             $this->logger->error('Data saving error: ', ['error' => $e->getMessage()]);
         }
+    }
+
+    public function postGrenke($response, SessionInterface $session, LoggerInterface $logger, EntityManagerInterface $em, AddressesRepository $addressesRepository, CompaniesRepository $companiesRepository): void {
+        
+        $data = [
+            "name" => "Grenke",
+            "company_id" => $response['data']['id'],
+            "contact_name" => true,
+            "company_name" => $response['data']['name'],
+            "address_street" => "54 Rue Marcel Dassault",
+            "address_zip_code" => "69740",
+            "address_city" => "Genas",
+            "address_country" => "France",
+            "is_for_invoice" => false,
+            "is_for_delivery" => false,
+            "is_for_quotation" => false
+        ];
+ 
+ 
+        $jsonData = json_encode($data);
+        $client = HttpClient::create();
+ 
+        $post = $client->request('POST', 'https://axonaut.com/api/v2/addresses', [
+            'headers' => [
+                'userApiKey' => $_ENV['API_KEY'],
+                'Content-Type' => 'application/json',
+            ],
+            'body' => $jsonData
+        ]);
+
+        $statusCode = $post->getStatusCode();
+        if ($statusCode == 200 || $statusCode == 201) {
+            $this->getWebhookAddresses($response, $session, $logger, $em, $addressesRepository, $companiesRepository);
+        } else {
+            // La requête a échoué
+        }
+
     }
 
 }
