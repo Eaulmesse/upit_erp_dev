@@ -3,8 +3,16 @@ monolog:
         - deprecation
         - webhook
         - error
+        - verification_numero
     
     handlers:
+
+        verification_numero:
+            type: stream
+            path: "%kernel.logs_dir%/verification_numero.log"
+            level: debug
+            channels: ['verification_numero']
+            
         webhook:
             type:  stream
             path:  '%kernel.logs_dir%/webhook.log'
