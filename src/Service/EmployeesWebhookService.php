@@ -3,14 +3,15 @@
 namespace App\Service;
 
 use App\Entity\Companies;
+use App\Entity\Employees;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use App\Repository\EmployeesRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\EmployeesRepository;
-use App\Entity\Employees;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 
 
@@ -45,6 +46,10 @@ class EmployeesWebhookService
     {
         $webhookData = $session->get('webhook_data');
 
+        if(isset($webhookData['data']["cellphone_number"])  || isset($webhookData['data']["phone_number"])) {
+            $webhookData = $this->mapContactPhoneNumber($webhookData);
+        }
+
         $this->logger->INFO('Création: ', $webhookData);
 
         $companyId = $webhookData["data"]["company_id"];
@@ -77,7 +82,14 @@ class EmployeesWebhookService
 
     public function updatingEmployees(SessionInterface $session, EntityManagerInterface $em): Response
     {
+
         $webhookData = $session->get('webhook_data');
+
+        if(isset($webhookData['data']["cellphone_number"])  || isset($webhookData['data']["phone_number"])) {
+            $webhookData = $this->mapContactPhoneNumber($webhookData);
+        }
+
+
         $this->logger->INFO('Modification: ', $webhookData);
 
         $updatedEmployee = $em->getRepository(Employees::class)->find($webhookData["data"]["id"]);
@@ -125,13 +137,13 @@ class EmployeesWebhookService
         return new Response(' Done!', Response::HTTP_OK);
     }
 
-    #[Route('/webhook/companies/filter', name: 'app_webhook_companies_filter')]
+    
     public function webhookEmployeesFilter(SessionInterface $session, EntityManagerInterface $em, LoggerInterface $logger): Response 
     {
         $webhookData = $session->get('webhook_data');
         
         if (isset($webhookData['topic']) && $webhookData['topic'] === 'employee.created') {
-
+            
             $this->creatingEmployees($session, $em);
             
         }  
@@ -146,6 +158,82 @@ class EmployeesWebhookService
         }
 
         return new Response(' Done!', Response::HTTP_OK);
+    }
+
+    public function mapContactPhoneNumber($webhookData): array
+    {
+        $pattern = '/^\+33[1-9]/';
+        
+        $modified = false;
+
+        // FORMATTAGE CELLPHONE
+        if(str_contains($webhookData['data']["cellphone_number"], " ")) {
+            $webhookData['data']["cellphone_number"] = str_replace(" ", "", $webhookData['data']["cellphone_number"]);
+            $modified = true;
+        }
+        
+        if(str_starts_with($webhookData['data']["cellphone_number"], "0")) {
+            $webhookData['data']["cellphone_number"] = "+33" . ltrim($webhookData['data']["cellphone_number"], '0');
+            $modified = true;
+        } 
+        else if (str_starts_with($webhookData['data']["cellphone_number"], "+330")) {
+            $webhookData['data']["cellphone_number"] = preg_replace('/^\+330/', '+33', $webhookData['data']["cellphone_number"]);
+            $modified = true;
+        } 
+        
+        // FORMATTAGE PHONE
+        if(str_contains($webhookData['data']["phone_number"], " ")) {
+            $webhookData['data']["phone_number"] = str_replace(" ", "", $webhookData['data']["phone_number"]);
+            $modified = true;
+        }
+        
+        if(str_starts_with($webhookData['data']["phone_number"], "0")) {
+            $webhookData['data']["phone_number"] = "+33" . ltrim($webhookData['data']["phone_number"], '0');
+            $modified = true;
+        } 
+        else if (str_starts_with($webhookData['data']["phone_number"], "+330")) {
+            $webhookData['data']["phone_number"] = preg_replace('/^\+330/', '+33', $webhookData['data']["phone_number"]);
+            $modified = true;
+        } 
+
+
+        if (preg_match($pattern, $webhookData['data']["phone_number"]) || $webhookData['data']["phone_number"] == null && preg_match($pattern, $webhookData['data']["cellphone_number"]) || $webhookData['data']["cellphone_number"] == null) {
+
+            if($modified) {
+                $this->patchContact($webhookData);
+            }
+
+            return $webhookData;
+        }
+        else {
+            $this->logger->INFO('Exception: ', $webhookData['data']);
+            return $webhookData;
+        }
+    }
+
+    public function patchContact($webhookData): void
+    {
+        $data = [
+            "gender" => $webhookData['data']["gender"],
+            "firstname" => $webhookData['data']["firstname"],
+            "lastname" => $webhookData['data']["lastname"],
+            "email" => $webhookData['data']["email"],
+            "phone_number" => $webhookData['data']["phone_number"],
+            "cellphone_number" => $webhookData['data']["cellphone_number"],
+        ];
+
+        $jsonData = json_encode($data);
+        $client = HttpClient::create();
+
+        $patch = $client->request('PATCH', 'https://axonaut.com/api/v2/employees/' . $webhookData['data']['id'], [
+            'headers' => [
+                'userApiKey' => $_ENV['API_KEY'],
+                'Content-Type' => 'application/json',
+            ],
+            'body' => $jsonData
+        ]);
+
+        
     }
 }
 
